@@ -2,12 +2,13 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Howdy - Cartography: Mapping REST APIs</title>
+        <title>Gathering Information - Cartography: Mapping REST APIs</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="An exploration of a portable technique for creating REST API clients">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff" />
 
+        <base href="">
 
         <link rel="stylesheet" href="book.css">
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
@@ -73,7 +74,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li class="affix"><a href="ch00-00-howdy.html" class="active">Howdy</a></li><li><a href="ch01-00-getting_started.html"><strong aria-hidden="true">1.</strong> Getting Started</a></li><li><ol class="section"><li><a href="ch01-01-gathering_information.html"><strong aria-hidden="true">1.1.</strong> Gathering Information</a></li><li><a href="ch01-02-initial_specification.html"><strong aria-hidden="true">1.2.</strong> Initial Specification</a></li><li><a href="ch01-03-get_the_first_verb.html"><strong aria-hidden="true">1.3.</strong> GET: the First Verb</a></li><li><a href="ch01-04-post_the_reverbening.html"><strong aria-hidden="true">1.4.</strong> POST: the Reverbening</a></li></ol></li></ol>
+            <ol class="chapter"><li class="affix"><a href="ch00-00-howdy.html">Howdy</a></li><li><a href="ch01-00-getting_started.html"><strong aria-hidden="true">1.</strong> Getting Started</a></li><li><ol class="section"><li><a href="ch01-01-gathering_information.html" class="active"><strong aria-hidden="true">1.1.</strong> Gathering Information</a></li><li><a href="ch01-02-initial_specification.html"><strong aria-hidden="true">1.2.</strong> Initial Specification</a></li><li><a href="ch01-03-get_the_first_verb.html"><strong aria-hidden="true">1.3.</strong> GET: the First Verb</a></li><li><a href="ch01-04-post_the_reverbening.html"><strong aria-hidden="true">1.4.</strong> POST: the Reverbening</a></li></ol></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -119,18 +120,20 @@
 
                 <div id="content" class="content">
                     <main>
-                        <a class="header" href="ch00-00-howdy.html#howdy" id="howdy"><h1>Howdy!</h1></a>
-<p>Have you ever wanted to create your very own client for a REST API? That's what this book is all about.</p>
-<p>Why &quot;cartography?&quot; Well, a lot of the REST APIs out there, regardless of how well documented they may be, require for us to do a bit of journeying and mapping along the way to figure out how things really work. A lot of the time, the API provider will go ahead and publish clients for the popular languages of the day because of the above conundrum, but that isn't always the case.</p>
-<p>For example, the <a href="https://developer.engineyard.com">Engine Yard API</a> is relatively well-documented, and Engine Yard does provide <a href="https://github.com/engineyard/core-client-rb">a Ruby client</a>, but what if I want to consume this API from a Python program?</p>
-<p>That is the example that we'll use for the purposes of this illustration: implementing a Python client for the Engine Yard API. That said, the techniques used here should be fairly easily adapated to most any language or API.</p>
-<a class="header" href="ch00-00-howdy.html#a-few-caveats" id="a-few-caveats"><h2>A Few Caveats</h2></a>
-<p>As seems to be the case with all books like this one, there are a few things that should probably be stated up front:</p>
+                        <a class="header" href="ch01-01-gathering_information.html#gathering-information" id="gathering-information"><h1>Gathering Information</h1></a>
+<p>In the case of the Engine Yard API, there's actually quite a lot of information that we can get from the <a href="https://developer.engineyard.com">API overview</a>:</p>
 <ul>
-<li>I'm currently employed by <a href="https://www.engineyard.com">Engine Yard</a> as a Professional Services Engineer, which is really just a fancy way to say that I do the &quot;whatever it takes&quot; on behalf of customers that need very custom setups. The use of the Engine Yard API as the example for this book is mostly because it is a somehat complicated (to the point of being difficult) API to consume.</li>
-<li>This very much is not the only way that one could develop an API client. This is, however, the method that I prefer, so I'm rolling with it.</li>
-<li>Python is being used as the implementation language in this book, but this is just an example of a language that is not officially supported by the API provider. As it were, there are partial implementations of the client that is being developed in this book in the following languages: Go, Javascript, ooc, Ruby, Rust</li>
-<li>I don't actually know Python, so this will be a learning experience for me as well. I'm using Python 3.6.4 locally to develop this client as we go, but it's important to note that this should probably not be considered an example of idiomatic Python code, let alone high-quality Python code. I honestly don't know Python well enough to even be able to make that previous statement.</li>
+<li>It's an authenticated HTTP API</li>
+<li>The authentication token can be passed in either as part of the query or as the <code>X-EY-TOKEN</code> request header</li>
+<li>From this page, we know that the <code>GET</code>, <code>POST</code>, <code>PUT</code>, and <code>PATCH</code> HTTP verbs are used</li>
+<li>We know that the API can both accept and serve the <code>application/json</code> MIME type</li>
+<li>From the sidebar, we can see that there are a good number of endpoints off of the API root</li>
+</ul>
+<p>Taking a look around at some of those endpoints, we learn even more about this specific API:</p>
+<ul>
+<li>The API is versioned</li>
+<li>The desired API version is specified as part of the <code>Accept</code> request header: <code>application/vnd.engineyard.v3+json</code></li>
+<li>The <code>DELETE</code> HTTP verb is also used in this API</li>
 </ul>
 
                     </main>
@@ -138,9 +141,13 @@
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
+                            <a rel="prev" href="ch01-00-getting_started.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
 
                         
-                            <a rel="next" href="ch01-00-getting_started.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="ch01-02-initial_specification.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
@@ -152,9 +159,13 @@
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
+                    <a href="ch01-00-getting_started.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
 
                 
-                    <a href="ch01-00-getting_started.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a href="ch01-02-initial_specification.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 
