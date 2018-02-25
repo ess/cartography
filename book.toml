@@ -1,6 +1,0 @@
-[book]
-title = "Cartography: Mapping REST APIs"
-description = "An exploration of a portable technique for creating REST API clients"
-author = "Dennis Walters, II"
-multilingual = false
-src = "src"
