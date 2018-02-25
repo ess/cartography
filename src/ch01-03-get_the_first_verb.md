@@ -162,7 +162,7 @@ class Client(object):
 
 That's fine and good, and it technically fulfills the `implements HTTP GET` requirement, but there are a few problems with this implementation:
 
-* It won't work: his is an authenticated API, but we're not handling authentication
+* It won't work: this is an authenticated API, but we're not handling authentication
 * It might not work: we haven't specified an API version
 * It might not work: we are assuming that the API is always in top notch operational condition and that we are always sending a valid request ... there is no error handling at all
 
@@ -569,4 +569,41 @@ class Client(object):
 
 Now that we've updated the client, the tests pass again. Sometimes, I do love developering. As you can see, we've also specified that we would like JSON back in our responses via the headers for the request.
 
-If all we ever have to do is handle the `GET` verb, we're done!
+There's one last bit of business to take care of before we consider this iteration complete.
+
+## Revisiting Result ##
+
+The `Result` class looks good. It gives us a clean way to communicate back to the code that's using our `Client`. But does it? We should illustrate that with a test in `tests/test_result.py`:
+
+```python
+from unittest import TestCase
+
+from maury.result import Result
+
+class TestResult(TestCase):
+    def test_ok(self):
+        good = Result('yay', None)
+        bad = Result(None, 'uh-oh')
+
+        self.assertTrue(good.ok)
+        self.assertFalse(bad.ok)
+
+    def test_body(self):
+        body = "head and shoulders, knees and toes"
+        result = Result(body, None)
+
+        self.assertEqual(result.body, body)
+
+        result = Result(body, 'Onoes!')
+
+        self.assertEqual(result.body, None)
+
+    def test_error(self):
+        body = 'eyes and ears and mouth and nose'
+        error = "I've made a terrible mistake"
+        result = Result(body, error)
+
+        self.assertEqual(result.error, error)
+```
+
+That does it. If all our client ever has to do is provide the ability to make `GET` requests against the API, we're done!
