@@ -2,13 +2,13 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Getting Started - Cartography: Mapping REST APIs</title>
+        <title>Initial Specification - Cartography: Mapping REST APIs</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="An exploration of a portable technique for creating REST API clients">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff" />
 
-        <base href="">
+        <base href="../">
 
         <link rel="stylesheet" href="book.css">
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
@@ -74,7 +74,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li class="affix"><a href="ch00-00-howdy.html">Howdy</a></li><li><a href="ch01-00-getting_started.html" class="active"><strong aria-hidden="true">1.</strong> Getting Started</a></li><li><ol class="section"><li><a href="ch01-01-gathering_information.html"><strong aria-hidden="true">1.1.</strong> Gathering Information</a></li><li><a href="ch01-02-initial_specification.html"><strong aria-hidden="true">1.2.</strong> Initial Specification</a></li></ol></li><li><a href="ch02-01-get_the_first_verb.html"><strong aria-hidden="true">2.</strong> GET: the First Verb</a></li><li><a href="ch03-01-post_the_reverbening.html"><strong aria-hidden="true">3.</strong> POST: the Reverbening</a></li></ol>
+            <ol class="chapter"><li class="affix"><a href="ch00/00-howdy.html">Howdy</a></li><li><a href="ch01/00-getting_started.html"><strong aria-hidden="true">1.</strong> Getting Started</a></li><li><ol class="section"><li><a href="ch01/01-gathering_information.html"><strong aria-hidden="true">1.1.</strong> Gathering Information</a></li><li><a href="ch01/02-initial_specification.html" class="active"><strong aria-hidden="true">1.2.</strong> Initial Specification</a></li></ol></li><li><a href="ch02/00-implementing_a_driver.html"><strong aria-hidden="true">2.</strong> Implementing A Driver</a></li><li><ol class="section"><li><a href="ch02/01-get_the_first_verb.html"><strong aria-hidden="true">2.1.</strong> GET: the First Verb</a></li><li><a href="ch02/02-post_the_reverbening.html"><strong aria-hidden="true">2.2.</strong> POST: the Reverbening</a></li><li><a href="ch02/03-put_patch_the_verb_legacy.html"><strong aria-hidden="true">2.3.</strong> PUT/PATCH: the Verb Legacy</a></li><li><a href="ch02/04-delete_the_final_verb.html"><strong aria-hidden="true">2.4.</strong> DELETE: the Final Verb</a></li></ol></li><li><a href="ch03/00-handling_endpoints.html"><strong aria-hidden="true">3.</strong> Handling Endpoints</a></li><li><ol class="section"><li><a href="ch03/01-users.html"><strong aria-hidden="true">3.1.</strong> Users</a></li><li><a href="ch03/02-accounts.html"><strong aria-hidden="true">3.2.</strong> Accounts</a></li><li><a href="ch03/03-environments.html"><strong aria-hidden="true">3.3.</strong> Environments</a></li></ol></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -120,22 +120,63 @@
 
                 <div id="content" class="content">
                     <main>
-                        <a class="header" href="ch01-00-getting_started.html#getting-started" id="getting-started"><h1>Getting Started</h1></a>
-<p>This chapter is all about doing the very first things that I do when staring this sort of project. It's not really about installing Python, setting up a new project space, or anything like that. More so, it's about what happens after all of those things.</p>
-<p>The first step in the process, at least for me, is to take a look at whatever documentation may exist for the API that I'm trying to map to see if I can find some basic hints for its usage.</p>
+                        <a class="header" href="ch01/02-initial_specification.html#initial-specification" id="initial-specification"><h1>Initial Specification</h1></a>
+<p>Now that we have done a bit of investigation and know a few things about the API with which we're working, we should put the results of that investigation to use.</p>
+<p>First off, we need to name the project. In keeping with the naming for my other EY API client implementations, I've called this project <a href="https://en.wikipedia.org/wiki/Maurice_W._Graham">maury</a>, but you can call it anything that you'd like.</p>
+<a class="header" href="ch01/02-initial_specification.html#client-requirements" id="client-requirements"><h2>Client Requirements</h2></a>
+<p>Now that the hardest part of any project is over with, we should identify the base requirements for our core client driver:</p>
+<ul>
+<li>It must speak HTTP</li>
+<li>It must accept an authentication token</li>
+<li>For the sake of flexibility, it should also accept the base URL for the API</li>
+<li>It must be able to use the HTTP verbs in question</li>
+<li>It must be able to set the <code>X-EY-TOKEN</code>, <code>Content-Type</code>, and <code>Accept</code> headers</li>
+<li>For convenience, it should treat all requests as relative, so it must be able to build URLs for each request</li>
+</ul>
+<p>That doesn't really sound like a lot, but the driver that we implement through the rest of this chapter is all we <em>really</em> need to work with the API. Don't worry, we're not stopping there at all. We have to crawl before we can walk, though.</p>
+<a class="header" href="ch01/02-initial_specification.html#library-support" id="library-support"><h2>Library Support</h2></a>
+<p>Technically, all of the things that we need in order to implement the core client driver is provided in the Python standard library. That being the case, after a quick google around, it looks like the community has decided on a better alternative to the HTTP client provided by std: <a href="http://docs.python-requests.org/en/master/">requests</a>.</p>
+<p>Additionally, after a bit of quick playing around with the URL parser provided by the standard library, I learned that I can't actually use it to build a URL, which is at least a little important, given that we need to build a URL for every request that the driver handles. More googling led me to the <a href="https://github.com/gruns/furl">furl</a> package.</p>
+<p>Finally, we're going to use <a href="http://nose.readthedocs.io/en/latest/">nose</a> to make writing and running our tests easier. Oh, yeah, we're testing. I'd hate for <a href="https://twitter.com/bryanl">Bryan Liles</a> to come after me for showing you how to do this stuff without showing you how I TAFT.</p>
+<p>So, now that we have some requirements, let's add them to our <code>setup.py</code>:</p>
+<pre><code class="language-python">from setuptools import setup
+
+install_requires=[
+    'furl',
+    'requests',
+    ]
+
+tests_require = [
+    'mock',
+    'nose',
+    'requests-mock',
+    ]
+
+setup(
+        name = 'maury',
+        version = '0.1.0',
+        description = 'A experimental client for the Engine Yard API',
+        license = 'MIT',
+        packages = ['maury'],
+        install_requires = install_requires,
+        tests_require = tests_require,
+        test_suite = &quot;nose.collector&quot;,
+        zip_safe = False)
+
+</code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
-                            <a rel="prev" href="ch00-00-howdy.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="ch01/01-gathering_information.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
                         
 
                         
-                            <a rel="next" href="ch01-01-gathering_information.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="ch02/00-implementing_a_driver.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
@@ -147,13 +188,13 @@
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
-                    <a href="ch00-00-howdy.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a href="ch01/01-gathering_information.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
 
                 
-                    <a href="ch01-01-gathering_information.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a href="ch02/00-implementing_a_driver.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 
