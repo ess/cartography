@@ -2,56 +2,17 @@
 
 Of course, our requirements state that we have to also be able to make `POST` requests to the API. So, we have more work cut out for us. Luckily, the handling of any given verb is quite a lot like the handling of any other given verb.
 
+## A Note From Our Sponsors ##
+
+Yeah, not really. More than anything, I wanted to take this opportunity to let you know that from this point on, listing the entirety of the referenced files would become unwieldy rather quickly.
+
+So, from now on, I'll just show the changes in the code examples instead of the entire file, where possible.
+
 ## Test-Driven ##
 
 Now that we're a little more familiar with the language and its unittest framework, let's change gears a bit. We're going to start our `POST` feature with a new test in `maury/tests/test_client.py`:
 
 ```python
-from unittest import TestCase
-import requests_mock
-
-from maury.client import Client
-
-class TestResult(TestCase):
-    @requests_mock.Mocker()
-    def test_get(self, m):
-        # The happy path
-        m.get('https://api.engineyard.com/sausages', text='{"sausages":"gold"}')
-
-        c = Client('https://api.engineyard.com', 'faketoken')
-        result = c.get('sausages', None)
-        self.assertTrue(result.ok)
-        self.assertEqual(result.body, {'sausages' : 'gold'})
-
-        # The happy path with params
-        m.get(
-                'https://api.engineyard.com/sausages?color=gold',
-                text='{"sausages":"yep"}')
-
-        result = c.get('sausages', {'color' : 'gold'})
-        self.assertTrue(result.ok)
-        self.assertEqual(result.body, {'sausages' : 'yep'})
-
-        # A wild API error appears!
-        m.get(
-                'https://api.engineyard.com/ed209',
-                status_code = 500,
-                text = 'Drop your weapon. You have 20 seconds to comply.')
-
-        result = c.get('ed209', None)
-        self.assertFalse(result.ok)
-        self.assertFalse(result.error == None)
-
-        # PEBCAK
-        m.get(
-                'https://api.engineyard.com/404',
-                status_code = 404,
-                text = 'You are now staring into the void. It is staring back.')
-
-        result = c.get('404', None)
-        self.assertFalse(result.ok)
-        self.assertFalse(result.error == None)
-
     @requests_mock.Mocker()
     def test_post(self, m):
         # The happy path
@@ -101,57 +62,6 @@ After running our tests, we see that our `test_post` test yields an error. That'
 Since they test the same (aside from the extra argument), it stands to reason that `get` and `post` should have rather similar implementations. Let's do a quick copypasta in `maury/client.py` and see how that works out:
 
 ```python
-from furl import furl
-import requests
-from .result import Result
-
-class Client(object):
-    """A base driver that talks to the Engine Yard API"""
-
-    def __init__(self, base_url, token):
-        """Set the base_url and token for a new Client instance"""
-
-        self.__base_url = base_url
-        self.__token = token
-
-    def __construct_request_url(self, path):
-        """Construct a URL for an API endpoint.
-        
-        Given a relative endpoint path, construct a fully-qualified API URL.
-        """
-
-        # Get a URL object that we can edit
-        u = furl(self.__base_url)
-
-        # Set the path to the endpoint in question
-        u.path = path
-
-        # Return the modified URL
-        return u.url
-
-    def get(self, path, params):
-        """Perform an HTTP GET on the API.
-        
-        Given an endpoint path and a dictionary of parameters, send the request
-        to the API and return the result.
-        """
-
-        r = requests.get(self.__construct_request_url(path),
-                params = params,
-                headers = {
-                    'X-EY-TOKEN' : self.__token,
-                    'accept' : 'application/vnd.engineyard.v3+json',
-                    'content-type' : 'application/json',
-                    })
-
-        if r.ok:
-            return Result(r.json(), None)
-
-        return Result(
-                None,
-                "The API returned the following status: %d" % r.status_code
-                )
-
     def post(self, path, params, data):
         """Perform an HTTP POST on the API.
         
@@ -190,34 +100,6 @@ So, one could argue that we're done at this point, but there's something that's 
 So, one of the things that makes these two methods so similar, aside from all verbs being very similar in the first place, is that they both interpret the API response identically. That being the case, we can construct a common method to use for response processing in `maury/client.py`:
 
 ```python
-from furl import furl
-import requests
-from .result import Result
-
-class Client(object):
-    """A base driver that talks to the Engine Yard API"""
-
-    def __init__(self, base_url, token):
-        """Set the base_url and token for a new Client instance"""
-
-        self.__base_url = base_url
-        self.__token = token
-
-    def __construct_request_url(self, path):
-        """Construct a URL for an API endpoint.
-        
-        Given a relative endpoint path, construct a fully-qualified API URL.
-        """
-
-        # Get a URL object that we can edit
-        u = furl(self.__base_url)
-
-        # Set the path to the endpoint in question
-        u.path = path
-
-        # Return the modified URL
-        return u.url
-
     def __process_response(self, response):
         """Process an API response into a Result."""
 
@@ -272,13 +154,6 @@ That's a little better, and thanks to our tests, we can see that the behavior ha
 Now, there are a lot of ways that we could switch up the request headers dictionary. I usually go for a private method for things like this, but I'm also not familiar enough with Python to know how much of an impact on resource usage and performance constantly generating new dicts will have. That being the case, let's jump into `maury/client.py` and see if we can find another way:
 
 ```python
-from furl import furl
-import requests
-from .result import Result
-
-class Client(object):
-    """A base driver that talks to the Engine Yard API"""
-
     def __init__(self, base_url, token):
         """Set the base_url and token for a new Client instance"""
 
@@ -288,32 +163,6 @@ class Client(object):
                 'accept' : 'application/vnd.engineyard.com.v3+json',
                 'content-type' : 'application/json'
                 }
-
-    def __construct_request_url(self, path):
-        """Construct a URL for an API endpoint.
-        
-        Given a relative endpoint path, construct a fully-qualified API URL.
-        """
-
-        # Get a URL object that we can edit
-        u = furl(self.__base_url)
-
-        # Set the path to the endpoint in question
-        u.path = path
-
-        # Return the modified URL
-        return u.url
-
-    def __process_response(self, response):
-        """Process an API response into a Result."""
-
-        if response.ok:
-            return Result(response.json(), None)
-
-        return Result(
-                None,
-                "The API returned the following status: %d" % response.status_code
-                )
 
     def get(self, path, params):
         """Perform an HTTP GET on the API.
