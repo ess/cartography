@@ -1024,6 +1024,65 @@ class TestResult(TestCase):
 <p>It might seem obvious that since we've already made a common method to handle the processing of an API response that it would also make sense to break out a method that performs the requests in question.</p>
 <p>That is a fine observation, and it is indeed what I would usually do myself. The problem here is that my lack of Python knowledge is preventing me from coming up with the best way to do so. So, I'm going to keep on going the way that we have been and leave this refactoring to you, if you choose to do it.</p>
 <a class="header" href="print.html#delete-the-final-verb" id="delete-the-final-verb"><h1>DELETE: the Final Verb</h1></a>
+<p>Our driver is very nearly complete. We only have one verb left to go, so let's get to it!</p>
+<a class="header" href="print.html#test" id="test"><h2>Test</h2></a>
+<p>As it would happen, <code>delete</code> has the same signature and expectations as <code>get</code>, so let's go ahead and copypasta <code>test_get</code> and modify it to <code>test_delete</code> in <code>maury/tests/test_client.py</code>:</p>
+<pre><code class="language-python">@requests_mock.Mocker()
+    def test_delete(self, m):
+        # The happy path
+        m.delete('https://api.engineyard.com/sausages', text='{&quot;sausages&quot;:&quot;gold&quot;}')
+
+        c = Client('https://api.engineyard.com', 'faketoken')
+        result = c.delete('sausages', None)
+        self.assertTrue(result.ok)
+        self.assertEqual(result.body, {'sausages' : 'gold'})
+
+        # The happy path with params
+        m.delete(
+                'https://api.engineyard.com/sausages?color=gold',
+                text='{&quot;sausages&quot;:&quot;yep&quot;}')
+
+        result = c.delete('sausages', {'color' : 'gold'})
+        self.assertTrue(result.ok)
+        self.assertEqual(result.body, {'sausages' : 'yep'})
+
+        # A wild API error appears!
+        m.delete(
+                'https://api.engineyard.com/ed209',
+                status_code = 500,
+                text = 'Drop your weapon. You have 20 seconds to comply.')
+
+        result = c.delete('ed209', None)
+        self.assertFalse(result.ok)
+        self.assertFalse(result.error == None)
+
+        # PEBCAK
+        m.delete(
+                'https://api.engineyard.com/404',
+                status_code = 404,
+                text = 'You are now staring into the void. It is staring back.')
+
+        result = c.delete('404', None)
+        self.assertFalse(result.ok)
+        self.assertFalse(result.error == None)
+</code></pre>
+<p>Okay, we have a failing test now, so we're going to do the obvious.</p>
+<a class="header" href="print.html#implementing-delete" id="implementing-delete"><h2>Implementing DELETE</h2></a>
+<p>Since the signature is the same as <code>get</code>, we're going to copypasta the <code>get</code> method definition and modify it to fit our new <code>delete</code> method in <code>maury/client.py</code>:</p>
+<pre><code class="language-python">    def delete(self, path, params):
+        &quot;&quot;&quot;Perform an HTTP DELETE on the API.
+        
+        Given an endpoint path and a dictionary of parameters, send the request
+        to the API and return the result.
+        &quot;&quot;&quot;
+
+        r = requests.delete(self.__construct_request_url(path),
+                params = params,
+                headers = self.__headers)
+
+        return self.__process_response(r)
+</code></pre>
+<p>There we have it. Now that all of the defined requirements are met and all of our tests pass, our client driver is technically complete.</p>
 <a class="header" href="print.html#handling-endpoints" id="handling-endpoints"><h1>Handling Endpoints</h1></a>
 <a class="header" href="print.html#users" id="users"><h1>Users</h1></a>
 <a class="header" href="print.html#accounts" id="accounts"><h1>Accounts</h1></a>
