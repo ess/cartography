@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Implementing A Driver - Cartography: Mapping REST APIs</title>
+        <title>Up-front Design - Cartography: Mapping REST APIs</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="An exploration of a portable technique for creating REST API clients">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -74,7 +74,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li class="affix"><a href="ch00/00-howdy.html">Howdy</a></li><li><a href="ch01/00-getting_started.html"><strong aria-hidden="true">1.</strong> Getting Started</a></li><li><ol class="section"><li><a href="ch01/01-gathering_information.html"><strong aria-hidden="true">1.1.</strong> Gathering Information</a></li><li><a href="ch01/02-initial_specification.html"><strong aria-hidden="true">1.2.</strong> Initial Specification</a></li></ol></li><li><a href="ch02/00-implementing_a_driver.html" class="active"><strong aria-hidden="true">2.</strong> Implementing A Driver</a></li><li><ol class="section"><li><a href="ch02/01-get_the_first_verb.html"><strong aria-hidden="true">2.1.</strong> GET: the First Verb</a></li><li><a href="ch02/02-post_the_reverbening.html"><strong aria-hidden="true">2.2.</strong> POST: the Reverbening</a></li><li><a href="ch02/03-put_patch_the_verb_legacy.html"><strong aria-hidden="true">2.3.</strong> PUT/PATCH: the Verb Legacy</a></li><li><a href="ch02/04-delete_the_final_verb.html"><strong aria-hidden="true">2.4.</strong> DELETE: the Final Verb</a></li></ol></li><li><a href="ch03/00-handling_endpoints.html"><strong aria-hidden="true">3.</strong> Handling Endpoints</a></li><li><ol class="section"><li><a href="ch03/01-users.html"><strong aria-hidden="true">3.1.</strong> Users</a></li><li><a href="ch03/02-accounts.html"><strong aria-hidden="true">3.2.</strong> Accounts</a></li><li><a href="ch03/03-environments.html"><strong aria-hidden="true">3.3.</strong> Environments</a></li></ol></li></ol>
+            <ol class="chapter"><li class="affix"><a href="preface/overview.html">Howdy</a></li><li><a href="getting_started/overview.html"><strong aria-hidden="true">1.</strong> Getting Started</a></li><li><ol class="section"><li><a href="getting_started/gathering_information.html"><strong aria-hidden="true">1.1.</strong> Gathering Information</a></li><li><a href="getting_started/up_front_design.html" class="active"><strong aria-hidden="true">1.2.</strong> Up-front Design</a></li><li><a href="getting_started/external_dependencies.html"><strong aria-hidden="true">1.3.</strong> External Dependencies</a></li></ol></li><li><a href="implementing_a_driver/overview.html"><strong aria-hidden="true">2.</strong> Implementing A Driver</a></li><li><ol class="section"><li><a href="implementing_a_driver/get_the_first_verb.html"><strong aria-hidden="true">2.1.</strong> GET: the First Verb</a></li><li><a href="implementing_a_driver/post_the_reverbening.html"><strong aria-hidden="true">2.2.</strong> POST: the Reverbening</a></li><li><a href="implementing_a_driver/put_patch_the_verb_legacy.html"><strong aria-hidden="true">2.3.</strong> PUT/PATCH: the Verb Legacy</a></li><li><a href="implementing_a_driver/delete_the_final_verb.html"><strong aria-hidden="true">2.4.</strong> DELETE: the Final Verb</a></li><li><a href="implementing_a_driver/odds_and_ends.html"><strong aria-hidden="true">2.5.</strong> Odds and Ends</a></li></ol></li><li><a href="handling_endpoints/overview.html"><strong aria-hidden="true">3.</strong> Handling Endpoints</a></li><li><ol class="section"><li><a href="handling_endpoints/users.html"><strong aria-hidden="true">3.1.</strong> Users</a></li><li><a href="handling_endpoints/accounts.html"><strong aria-hidden="true">3.2.</strong> Accounts</a></li><li><a href="handling_endpoints/environments.html"><strong aria-hidden="true">3.3.</strong> Environments</a></li></ol></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -120,20 +120,41 @@
 
                 <div id="content" class="content">
                     <main>
-                        <a class="header" href="ch02/00-implementing_a_driver.html#implementing-a-driver" id="implementing-a-driver"><h1>Implementing A Driver</h1></a>
+                        <a class="header" href="getting_started/up_front_design.html#up-front-design" id="up-front-design"><h1>Up-front Design</h1></a>
+<p>Now that we have some information about the API that we're mapping, we can start designing our client. Here's what we know:</p>
+<ul>
+<li>We need to be able to handle HTTP interactions with a JSON-centric REST API</li>
+<li>That API is authenticated</li>
+<li>That API is versioned</li>
+<li>That API uses an uncommon version specification strategy</li>
+<li>We need to be able to handle multiple endpoints on that API</li>
+</ul>
+<p>We'll break those down a bit further in a few minues, but before we do that, we should think a bit about the overall design of our client.</p>
+<p>There are a few schools of thought as to what an API client should look like. At the extremes of that group are basically &quot;a library full of functions&quot; and &quot;a web ORM.&quot;</p>
+<p>I prefer something that's a bit between the two.</p>
+<a class="header" href="getting_started/up_front_design.html#our-design" id="our-design"><h2>Our Design</h2></a>
+<p>For most every API client that I've written, I've gone with a design that looks a lot like the Data Mapper pattern overlaid on top of a Repsitory. I'm not incredibly familiar with libraries that work this way outside of the Ruby community, but from that community, the best examples are probably <a href="http://rom-rb.org/">Ruby Object Mapper</a> and <a href="https://github.com/hanami/model">Hanami Model</a>.</p>
+<p>What we're going to do is to break this API client project into two main phases:</p>
+<ol>
+<li>First, we're going to create a HTTP driver that interfaces with the REST API. This driver is basically our doorway to all communication with the upstream API. It takes care of authentication, request and response handling, and is really the core of the whole deal.</li>
+<li>The second phase is the modeling of the upstream API endpoints and the data structures specific to them.</li>
+</ol>
+<a class="header" href="getting_started/up_front_design.html#name" id="name"><h2>Name</h2></a>
+<p>Before we move forward, the hardest part of the whole project needs to be done: we need to name the project. In keeping with the naming for my other EY API client implementations, I've called this project <a href="https://en.wikipedia.org/wiki/Maurice_W._Graham">maury</a>, but you can call it anything that you'd like.</p>
+<p>With that, let's take be a bit proactive and determine the external dependencies that we want to use for the project.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
-                            <a rel="prev" href="ch01/02-initial_specification.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="getting_started/gathering_information.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
                         
 
                         
-                            <a rel="next" href="ch02/01-get_the_first_verb.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="getting_started/external_dependencies.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
@@ -145,13 +166,13 @@
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
-                    <a href="ch01/02-initial_specification.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a href="getting_started/gathering_information.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
 
                 
-                    <a href="ch02/01-get_the_first_verb.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a href="getting_started/external_dependencies.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 

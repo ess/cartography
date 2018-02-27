@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Environments - Cartography: Mapping REST APIs</title>
+        <title>Implementing A Driver - Cartography: Mapping REST APIs</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="An exploration of a portable technique for creating REST API clients">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -74,7 +74,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li class="affix"><a href="ch00/00-howdy.html">Howdy</a></li><li><a href="ch01/00-getting_started.html"><strong aria-hidden="true">1.</strong> Getting Started</a></li><li><ol class="section"><li><a href="ch01/01-gathering_information.html"><strong aria-hidden="true">1.1.</strong> Gathering Information</a></li><li><a href="ch01/02-initial_specification.html"><strong aria-hidden="true">1.2.</strong> Initial Specification</a></li></ol></li><li><a href="ch02/00-implementing_a_driver.html"><strong aria-hidden="true">2.</strong> Implementing A Driver</a></li><li><ol class="section"><li><a href="ch02/01-get_the_first_verb.html"><strong aria-hidden="true">2.1.</strong> GET: the First Verb</a></li><li><a href="ch02/02-post_the_reverbening.html"><strong aria-hidden="true">2.2.</strong> POST: the Reverbening</a></li><li><a href="ch02/03-put_patch_the_verb_legacy.html"><strong aria-hidden="true">2.3.</strong> PUT/PATCH: the Verb Legacy</a></li><li><a href="ch02/04-delete_the_final_verb.html"><strong aria-hidden="true">2.4.</strong> DELETE: the Final Verb</a></li></ol></li><li><a href="ch03/00-handling_endpoints.html"><strong aria-hidden="true">3.</strong> Handling Endpoints</a></li><li><ol class="section"><li><a href="ch03/01-users.html"><strong aria-hidden="true">3.1.</strong> Users</a></li><li><a href="ch03/02-accounts.html"><strong aria-hidden="true">3.2.</strong> Accounts</a></li><li><a href="ch03/03-environments.html" class="active"><strong aria-hidden="true">3.3.</strong> Environments</a></li></ol></li></ol>
+            <ol class="chapter"><li class="affix"><a href="preface/overview.html">Howdy</a></li><li><a href="getting_started/overview.html"><strong aria-hidden="true">1.</strong> Getting Started</a></li><li><ol class="section"><li><a href="getting_started/gathering_information.html"><strong aria-hidden="true">1.1.</strong> Gathering Information</a></li><li><a href="getting_started/up_front_design.html"><strong aria-hidden="true">1.2.</strong> Up-front Design</a></li><li><a href="getting_started/external_dependencies.html"><strong aria-hidden="true">1.3.</strong> External Dependencies</a></li></ol></li><li><a href="implementing_a_driver/overview.html" class="active"><strong aria-hidden="true">2.</strong> Implementing A Driver</a></li><li><ol class="section"><li><a href="implementing_a_driver/get_the_first_verb.html"><strong aria-hidden="true">2.1.</strong> GET: the First Verb</a></li><li><a href="implementing_a_driver/post_the_reverbening.html"><strong aria-hidden="true">2.2.</strong> POST: the Reverbening</a></li><li><a href="implementing_a_driver/put_patch_the_verb_legacy.html"><strong aria-hidden="true">2.3.</strong> PUT/PATCH: the Verb Legacy</a></li><li><a href="implementing_a_driver/delete_the_final_verb.html"><strong aria-hidden="true">2.4.</strong> DELETE: the Final Verb</a></li><li><a href="implementing_a_driver/odds_and_ends.html"><strong aria-hidden="true">2.5.</strong> Odds and Ends</a></li></ol></li><li><a href="handling_endpoints/overview.html"><strong aria-hidden="true">3.</strong> Handling Endpoints</a></li><li><ol class="section"><li><a href="handling_endpoints/users.html"><strong aria-hidden="true">3.1.</strong> Users</a></li><li><a href="handling_endpoints/accounts.html"><strong aria-hidden="true">3.2.</strong> Accounts</a></li><li><a href="handling_endpoints/environments.html"><strong aria-hidden="true">3.3.</strong> Environments</a></li></ol></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -120,18 +120,36 @@
 
                 <div id="content" class="content">
                     <main>
-                        <a class="header" href="ch03/03-environments.html#environments" id="environments"><h1>Environments</h1></a>
+                        <a class="header" href="implementing_a_driver/overview.html#implementing-a-driver" id="implementing-a-driver"><h1>Implementing A Driver</h1></a>
+<p>We're now entering Phase 1 of the project: implementing the core HTTP driver for the client.</p>
+<p>To that end, let's take the information that we gathered in the previous chapter and generate the requirements for the driver.</p>
+<a class="header" href="implementing_a_driver/overview.html#driver-requirements" id="driver-requirements"><h2>Driver Requirements</h2></a>
+<p>We already have a name for the project. Now that the hardest part of any project is over with, we should identify the base requirements for our core client driver:</p>
+<ul>
+<li>It must speak HTTP</li>
+<li>It must accept an authentication token</li>
+<li>For the sake of flexibility, it should also accept the base URL for the API</li>
+<li>It must be able to use the HTTP verbs in question</li>
+<li>It must be able to set the <code>X-EY-TOKEN</code>, <code>Content-Type</code>, and <code>Accept</code> headers</li>
+<li>For convenience, it should treat all requests as relative, so it must be able to build URLs for each request</li>
+</ul>
+<p>That doesn't really sound like a lot, but the driver that we implement through the rest of this chapter is all we <em>really</em> need to work with the API. Don't worry, we're not stopping there at all. We have to crawl before we can walk, though.</p>
+<p>So, let's get started crawling.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
-                            <a rel="prev" href="ch03/02-accounts.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="getting_started/external_dependencies.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
                         
 
+                        
+                            <a rel="next" href="implementing_a_driver/get_the_first_verb.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
                         
 
                         <div style="clear: both"></div>
@@ -141,11 +159,15 @@
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
-                    <a href="ch03/02-accounts.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a href="getting_started/external_dependencies.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
 
+                
+                    <a href="implementing_a_driver/get_the_first_verb.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
                 
             </nav>
 

@@ -74,7 +74,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li class="affix"><a href="ch00/00-howdy.html">Howdy</a></li><li><a href="ch01/00-getting_started.html"><strong aria-hidden="true">1.</strong> Getting Started</a></li><li><ol class="section"><li><a href="ch01/01-gathering_information.html"><strong aria-hidden="true">1.1.</strong> Gathering Information</a></li><li><a href="ch01/02-initial_specification.html"><strong aria-hidden="true">1.2.</strong> Initial Specification</a></li></ol></li><li><a href="ch02/00-implementing_a_driver.html"><strong aria-hidden="true">2.</strong> Implementing A Driver</a></li><li><ol class="section"><li><a href="ch02/01-get_the_first_verb.html"><strong aria-hidden="true">2.1.</strong> GET: the First Verb</a></li><li><a href="ch02/02-post_the_reverbening.html"><strong aria-hidden="true">2.2.</strong> POST: the Reverbening</a></li><li><a href="ch02/03-put_patch_the_verb_legacy.html"><strong aria-hidden="true">2.3.</strong> PUT/PATCH: the Verb Legacy</a></li><li><a href="ch02/04-delete_the_final_verb.html"><strong aria-hidden="true">2.4.</strong> DELETE: the Final Verb</a></li></ol></li><li><a href="ch03/00-handling_endpoints.html"><strong aria-hidden="true">3.</strong> Handling Endpoints</a></li><li><ol class="section"><li><a href="ch03/01-users.html"><strong aria-hidden="true">3.1.</strong> Users</a></li><li><a href="ch03/02-accounts.html"><strong aria-hidden="true">3.2.</strong> Accounts</a></li><li><a href="ch03/03-environments.html"><strong aria-hidden="true">3.3.</strong> Environments</a></li></ol></li></ol>
+            <ol class="chapter"><li class="affix"><a href="preface/overview.html">Howdy</a></li><li><a href="getting_started/overview.html"><strong aria-hidden="true">1.</strong> Getting Started</a></li><li><ol class="section"><li><a href="getting_started/gathering_information.html"><strong aria-hidden="true">1.1.</strong> Gathering Information</a></li><li><a href="getting_started/up_front_design.html"><strong aria-hidden="true">1.2.</strong> Up-front Design</a></li><li><a href="getting_started/external_dependencies.html"><strong aria-hidden="true">1.3.</strong> External Dependencies</a></li></ol></li><li><a href="implementing_a_driver/overview.html"><strong aria-hidden="true">2.</strong> Implementing A Driver</a></li><li><ol class="section"><li><a href="implementing_a_driver/get_the_first_verb.html"><strong aria-hidden="true">2.1.</strong> GET: the First Verb</a></li><li><a href="implementing_a_driver/post_the_reverbening.html"><strong aria-hidden="true">2.2.</strong> POST: the Reverbening</a></li><li><a href="implementing_a_driver/put_patch_the_verb_legacy.html"><strong aria-hidden="true">2.3.</strong> PUT/PATCH: the Verb Legacy</a></li><li><a href="implementing_a_driver/delete_the_final_verb.html"><strong aria-hidden="true">2.4.</strong> DELETE: the Final Verb</a></li><li><a href="implementing_a_driver/odds_and_ends.html"><strong aria-hidden="true">2.5.</strong> Odds and Ends</a></li></ol></li><li><a href="handling_endpoints/overview.html"><strong aria-hidden="true">3.</strong> Handling Endpoints</a></li><li><ol class="section"><li><a href="handling_endpoints/users.html"><strong aria-hidden="true">3.1.</strong> Users</a></li><li><a href="handling_endpoints/accounts.html"><strong aria-hidden="true">3.2.</strong> Accounts</a></li><li><a href="handling_endpoints/environments.html"><strong aria-hidden="true">3.3.</strong> Environments</a></li></ol></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -120,19 +120,7 @@
 
                 <div id="content" class="content">
                     <main>
-                        <a class="header" href="print.html#howdy" id="howdy"><h1>Howdy!</h1></a>
-<p>Have you ever wanted to create your very own client for a REST API? That's what this book is all about.</p>
-<p>Why &quot;cartography?&quot; Well, a lot of the REST APIs out there, regardless of how well documented they may be, require for us to do a bit of journeying and mapping along the way to figure out how things really work. A lot of the time, the API provider will go ahead and publish clients for the popular languages of the day because of the above conundrum, but that isn't always the case.</p>
-<p>For example, the <a href="https://developer.engineyard.com">Engine Yard API</a> is relatively well-documented, and Engine Yard does provide <a href="https://github.com/engineyard/core-client-rb">a Ruby client</a>, but what if I want to consume this API from a Python program?</p>
-<p>That is the example that we'll use for the purposes of this illustration: implementing a Python client for the Engine Yard API. That said, the techniques used here should be fairly easily adapated to most any language or API.</p>
-<a class="header" href="print.html#a-few-caveats" id="a-few-caveats"><h2>A Few Caveats</h2></a>
-<p>As seems to be the case with all books like this one, there are a few things that should probably be stated up front:</p>
-<ul>
-<li>I'm currently employed by <a href="https://www.engineyard.com">Engine Yard</a> as a Professional Services Engineer, which is really just a fancy way to say that I do the &quot;whatever it takes&quot; on behalf of customers that need very custom setups. The use of the Engine Yard API as the example for this book is mostly because it is a somehat complicated (to the point of being difficult) API to consume.</li>
-<li>This very much is not the only way that one could develop an API client. This is, however, the method that I prefer, so I'm rolling with it.</li>
-<li>Python is being used as the implementation language in this book, but this is just an example of a language that is not officially supported by the API provider. As it were, there are partial implementations of the client that is being developed in this book in the following languages: Go, Javascript, ooc, Ruby, Rust</li>
-<li>I don't actually know Python, so this will be a learning experience for me as well. I'm using Python 3.6.4 locally to develop this client as we go, but it's important to note that this should probably not be considered an example of idiomatic Python code, let alone high-quality Python code. I honestly don't know Python well enough to even be able to make that previous statement.</li>
-</ul>
+                        <a class="header" href="print.html#howdy" id="howdy"><h1>Howdy</h1></a>
 <a class="header" href="print.html#getting-started" id="getting-started"><h1>Getting Started</h1></a>
 <p>This chapter is all about doing the very first things that I do when staring this sort of project. It's not really about installing Python, setting up a new project space, or anything like that. More so, it's about what happens after all of those things.</p>
 <p>The first step in the process, at least for me, is to take a look at whatever documentation may exist for the API that I'm trying to map to see if I can find some basic hints for its usage.</p>
@@ -151,25 +139,43 @@
 <li>The desired API version is specified as part of the <code>Accept</code> request header: <code>application/vnd.engineyard.v3+json</code></li>
 <li>The <code>DELETE</code> HTTP verb is also used in this API</li>
 </ul>
-<a class="header" href="print.html#initial-specification" id="initial-specification"><h1>Initial Specification</h1></a>
-<p>Now that we have done a bit of investigation and know a few things about the API with which we're working, we should put the results of that investigation to use.</p>
-<p>First off, we need to name the project. In keeping with the naming for my other EY API client implementations, I've called this project <a href="https://en.wikipedia.org/wiki/Maurice_W._Graham">maury</a>, but you can call it anything that you'd like.</p>
-<a class="header" href="print.html#client-requirements" id="client-requirements"><h2>Client Requirements</h2></a>
-<p>Now that the hardest part of any project is over with, we should identify the base requirements for our core client driver:</p>
+<a class="header" href="print.html#up-front-design" id="up-front-design"><h1>Up-front Design</h1></a>
+<p>Now that we have some information about the API that we're mapping, we can start designing our client. Here's what we know:</p>
 <ul>
-<li>It must speak HTTP</li>
-<li>It must accept an authentication token</li>
-<li>For the sake of flexibility, it should also accept the base URL for the API</li>
-<li>It must be able to use the HTTP verbs in question</li>
-<li>It must be able to set the <code>X-EY-TOKEN</code>, <code>Content-Type</code>, and <code>Accept</code> headers</li>
-<li>For convenience, it should treat all requests as relative, so it must be able to build URLs for each request</li>
+<li>We need to be able to handle HTTP interactions with a JSON-centric REST API</li>
+<li>That API is authenticated</li>
+<li>That API is versioned</li>
+<li>That API uses an uncommon version specification strategy</li>
+<li>We need to be able to handle multiple endpoints on that API</li>
 </ul>
-<p>That doesn't really sound like a lot, but the driver that we implement through the rest of this chapter is all we <em>really</em> need to work with the API. Don't worry, we're not stopping there at all. We have to crawl before we can walk, though.</p>
-<a class="header" href="print.html#library-support" id="library-support"><h2>Library Support</h2></a>
-<p>Technically, all of the things that we need in order to implement the core client driver is provided in the Python standard library. That being the case, after a quick google around, it looks like the community has decided on a better alternative to the HTTP client provided by std: <a href="http://docs.python-requests.org/en/master/">requests</a>.</p>
-<p>Additionally, after a bit of quick playing around with the URL parser provided by the standard library, I learned that I can't actually use it to build a URL, which is at least a little important, given that we need to build a URL for every request that the driver handles. More googling led me to the <a href="https://github.com/gruns/furl">furl</a> package.</p>
-<p>Finally, we're going to use <a href="http://nose.readthedocs.io/en/latest/">nose</a> to make writing and running our tests easier. Oh, yeah, we're testing. I'd hate for <a href="https://twitter.com/bryanl">Bryan Liles</a> to come after me for showing you how to do this stuff without showing you how I TAFT.</p>
-<p>So, now that we have some requirements, let's add them to our <code>setup.py</code>:</p>
+<p>We'll break those down a bit further in a few minues, but before we do that, we should think a bit about the overall design of our client.</p>
+<p>There are a few schools of thought as to what an API client should look like. At the extremes of that group are basically &quot;a library full of functions&quot; and &quot;a web ORM.&quot;</p>
+<p>I prefer something that's a bit between the two.</p>
+<a class="header" href="print.html#our-design" id="our-design"><h2>Our Design</h2></a>
+<p>For most every API client that I've written, I've gone with a design that looks a lot like the Data Mapper pattern overlaid on top of a Repsitory. I'm not incredibly familiar with libraries that work this way outside of the Ruby community, but from that community, the best examples are probably <a href="http://rom-rb.org/">Ruby Object Mapper</a> and <a href="https://github.com/hanami/model">Hanami Model</a>.</p>
+<p>What we're going to do is to break this API client project into two main phases:</p>
+<ol>
+<li>First, we're going to create a HTTP driver that interfaces with the REST API. This driver is basically our doorway to all communication with the upstream API. It takes care of authentication, request and response handling, and is really the core of the whole deal.</li>
+<li>The second phase is the modeling of the upstream API endpoints and the data structures specific to them.</li>
+</ol>
+<a class="header" href="print.html#name" id="name"><h2>Name</h2></a>
+<p>Before we move forward, the hardest part of the whole project needs to be done: we need to name the project. In keeping with the naming for my other EY API client implementations, I've called this project <a href="https://en.wikipedia.org/wiki/Maurice_W._Graham">maury</a>, but you can call it anything that you'd like.</p>
+<p>With that, let's take be a bit proactive and determine the external dependencies that we want to use for the project.</p>
+<a class="header" href="print.html#external-dependencies" id="external-dependencies"><h1>External Dependencies</h1></a>
+<p>It might seem a bit like putting the cart before the horse, but being totally unfamiliar with Python and its support for the things that we already know our client needs to do, it seems like a good idea to go ahead and research how to do those things.</p>
+<p>Technically, all of the things that we need in order to implement the core driver is provided in the Python standard library. After a bit of comparitive research, though, it seems that the non-standard options provided by the community might well be easier to use (and are often suggested over the standard library).</p>
+<p>So, let's take a look at the options.</p>
+<a class="header" href="print.html#http" id="http"><h2>HTTP</h2></a>
+<p>Interestingly, the <a href="https://docs.python.org/3/library/http.client.html">documentation</a> for Python's standard library <code>http.client</code> package directs us to check out a community-provided library instead for a higher-level interface: <a href="http://docs.python-requests.org/en/master/">requests</a>.</p>
+<p>After looking at how both of these options are used, I'm <em>totally</em> going the easy route by pulling in the <code>requests</code> package.</p>
+<a class="header" href="print.html#url-construction" id="url-construction"><h2>URL Construction</h2></a>
+<p>In my experience, we're going to end up building some URLs in this implementation. After a bit of trial and error with Python's built-in mechanism for this, I left with a bad taste in my mouth and went in search for another option.</p>
+<p>More googling and a bit of playing around led me to the <a href="https://github.com/gruns/furl">furl</a> package.</p>
+<a class="header" href="print.html#testing" id="testing"><h2>Testing</h2></a>
+<p>While researching the above concepts, I started thinking about testing.</p>
+<p>We're going to use <a href="http://nose.readthedocs.io/en/latest/">nose</a> to make writing and running our tests easier. Oh, yeah, we're testing. I'd hate for <a href="https://twitter.com/bryanl">Bryan Liles</a> to come after me for showing you how to do this stuff without showing you how I <a href="https://www.youtube.com/watch?v=iwUR0kOVNs8">TATFT</a>.</p>
+<a class="header" href="print.html#setuppy" id="setuppy"><h2><code>setup.py</code></h2></a>
+<p>So, now that we have our external dependencies, let's add them to our <code>setup.py</code>:</p>
 <pre><code class="language-python">from setuptools import setup
 
 install_requires=[
@@ -196,6 +202,20 @@ setup(
 
 </code></pre>
 <a class="header" href="print.html#implementing-a-driver" id="implementing-a-driver"><h1>Implementing A Driver</h1></a>
+<p>We're now entering Phase 1 of the project: implementing the core HTTP driver for the client.</p>
+<p>To that end, let's take the information that we gathered in the previous chapter and generate the requirements for the driver.</p>
+<a class="header" href="print.html#driver-requirements" id="driver-requirements"><h2>Driver Requirements</h2></a>
+<p>We already have a name for the project. Now that the hardest part of any project is over with, we should identify the base requirements for our core client driver:</p>
+<ul>
+<li>It must speak HTTP</li>
+<li>It must accept an authentication token</li>
+<li>For the sake of flexibility, it should also accept the base URL for the API</li>
+<li>It must be able to use the HTTP verbs in question</li>
+<li>It must be able to set the <code>X-EY-TOKEN</code>, <code>Content-Type</code>, and <code>Accept</code> headers</li>
+<li>For convenience, it should treat all requests as relative, so it must be able to build URLs for each request</li>
+</ul>
+<p>That doesn't really sound like a lot, but the driver that we implement through the rest of this chapter is all we <em>really</em> need to work with the API. Don't worry, we're not stopping there at all. We have to crawl before we can walk, though.</p>
+<p>So, let's get started crawling.</p>
 <a class="header" href="print.html#get-the-first-verb" id="get-the-first-verb"><h1>GET: the First Verb</h1></a>
 <p>I like to start my implementation with the first, least-destructive HTTP verb in mind: <code>GET</code>.</p>
 <p>So, let's get started developing our <code>Client</code> class. Why am I using a class here? Aside from the general <em>when in Rome ...</em> rule (though I'm told that it's almost bad form to do OOP in this OO language, by somebody who's probably trollin'), I have some plans down the line for how this client will be used. Also, our requirements flat out state that we need to keep track of some data: the base URL for the API and an authentication token.</p>
@@ -1083,6 +1103,31 @@ class TestResult(TestCase):
         return self.__process_response(r)
 </code></pre>
 <p>There we have it. Now that all of the defined requirements are met and all of our tests pass, our client driver is technically complete.</p>
+<a class="header" href="print.html#odds-and-ends" id="odds-and-ends"><h1>Odds and Ends</h1></a>
+<p>Keep in mind, I said that it's <em>technically</em> complete, in as much as it does everything that we need for it to do. That doesn't necessarily mean that we're done, though.</p>
+<p>How usable is the <code>maury</code> package right now? How many layers of documentation and submodules does one have to dig through to find out how to create a <code>Client</code>?</p>
+<a class="header" href="print.html#an-entrypoint" id="an-entrypoint"><h2>An Entrypoint</h2></a>
+<p>While it's not strictly necessary, I like to provide an easy entrypoint at the top-level of the package for things that get used a lot. That way, a developer using my library can just import the top level package, ask it for a client, and get rolling.</p>
+<p>First thing first, let's add a test for the function that we want to create in <code>maury/tests/test_new_client.py</code>:</p>
+<pre><code class="language-python">from unittest import TestCase
+
+import maury
+
+class TestNewClient(TestCase):
+    def test_is_client(self):
+        s = maury.new_client('https://example.com', 'token12345')
+        self.assertIsInstance(s, maury.Client)
+</code></pre>
+<p>That's a pretty simple test (almost too simple, really), but it will do for our purposes right now. What's more, it fails if we try to run our tests right now, so we're definitely on the right track! Let's go ahead and implement this function in <code>maury/__init__.py</code>:</p>
+<pre><code class="language-python">from .client import Client
+
+def new_client(base_url, token):
+    return Client(base_url, token)
+</code></pre>
+<a class="header" href="print.html#conclusion" id="conclusion"><h2>Conclusion</h2></a>
+<p>Now we have a <em>somewhat friendly</em> and complete driver for the API that we're mapping. That's it for Phase 1, and now we're ready to move on to Phase 2.</p>
+<p>Feel free to take a break. Phase 2 is, if you can imagine it, a lot more reliant on code snippets than Phase 1 is, and it's also a rather tedious and repetitive affair.</p>
+<p>Also, just to be clear, you don't <strong><em>have</em></strong> to go any further than you already have. If you simply want to provide a lowish-level client that knows how to talk to the API that you're mapping so others can have a handy building block on which to build their API interactions, you're done. I like to go a little further than that, though, so I'll go ahead and trudge forward.</p>
 <a class="header" href="print.html#handling-endpoints" id="handling-endpoints"><h1>Handling Endpoints</h1></a>
 <a class="header" href="print.html#users" id="users"><h1>Users</h1></a>
 <a class="header" href="print.html#accounts" id="accounts"><h1>Accounts</h1></a>

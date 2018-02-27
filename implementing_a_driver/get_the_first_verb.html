@@ -74,7 +74,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li class="affix"><a href="ch00/00-howdy.html">Howdy</a></li><li><a href="ch01/00-getting_started.html"><strong aria-hidden="true">1.</strong> Getting Started</a></li><li><ol class="section"><li><a href="ch01/01-gathering_information.html"><strong aria-hidden="true">1.1.</strong> Gathering Information</a></li><li><a href="ch01/02-initial_specification.html"><strong aria-hidden="true">1.2.</strong> Initial Specification</a></li></ol></li><li><a href="ch02/00-implementing_a_driver.html"><strong aria-hidden="true">2.</strong> Implementing A Driver</a></li><li><ol class="section"><li><a href="ch02/01-get_the_first_verb.html" class="active"><strong aria-hidden="true">2.1.</strong> GET: the First Verb</a></li><li><a href="ch02/02-post_the_reverbening.html"><strong aria-hidden="true">2.2.</strong> POST: the Reverbening</a></li><li><a href="ch02/03-put_patch_the_verb_legacy.html"><strong aria-hidden="true">2.3.</strong> PUT/PATCH: the Verb Legacy</a></li><li><a href="ch02/04-delete_the_final_verb.html"><strong aria-hidden="true">2.4.</strong> DELETE: the Final Verb</a></li></ol></li><li><a href="ch03/00-handling_endpoints.html"><strong aria-hidden="true">3.</strong> Handling Endpoints</a></li><li><ol class="section"><li><a href="ch03/01-users.html"><strong aria-hidden="true">3.1.</strong> Users</a></li><li><a href="ch03/02-accounts.html"><strong aria-hidden="true">3.2.</strong> Accounts</a></li><li><a href="ch03/03-environments.html"><strong aria-hidden="true">3.3.</strong> Environments</a></li></ol></li></ol>
+            <ol class="chapter"><li class="affix"><a href="preface/overview.html">Howdy</a></li><li><a href="getting_started/overview.html"><strong aria-hidden="true">1.</strong> Getting Started</a></li><li><ol class="section"><li><a href="getting_started/gathering_information.html"><strong aria-hidden="true">1.1.</strong> Gathering Information</a></li><li><a href="getting_started/up_front_design.html"><strong aria-hidden="true">1.2.</strong> Up-front Design</a></li><li><a href="getting_started/external_dependencies.html"><strong aria-hidden="true">1.3.</strong> External Dependencies</a></li></ol></li><li><a href="implementing_a_driver/overview.html"><strong aria-hidden="true">2.</strong> Implementing A Driver</a></li><li><ol class="section"><li><a href="implementing_a_driver/get_the_first_verb.html" class="active"><strong aria-hidden="true">2.1.</strong> GET: the First Verb</a></li><li><a href="implementing_a_driver/post_the_reverbening.html"><strong aria-hidden="true">2.2.</strong> POST: the Reverbening</a></li><li><a href="implementing_a_driver/put_patch_the_verb_legacy.html"><strong aria-hidden="true">2.3.</strong> PUT/PATCH: the Verb Legacy</a></li><li><a href="implementing_a_driver/delete_the_final_verb.html"><strong aria-hidden="true">2.4.</strong> DELETE: the Final Verb</a></li><li><a href="implementing_a_driver/odds_and_ends.html"><strong aria-hidden="true">2.5.</strong> Odds and Ends</a></li></ol></li><li><a href="handling_endpoints/overview.html"><strong aria-hidden="true">3.</strong> Handling Endpoints</a></li><li><ol class="section"><li><a href="handling_endpoints/users.html"><strong aria-hidden="true">3.1.</strong> Users</a></li><li><a href="handling_endpoints/accounts.html"><strong aria-hidden="true">3.2.</strong> Accounts</a></li><li><a href="handling_endpoints/environments.html"><strong aria-hidden="true">3.3.</strong> Environments</a></li></ol></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -120,7 +120,7 @@
 
                 <div id="content" class="content">
                     <main>
-                        <a class="header" href="ch02/01-get_the_first_verb.html#get-the-first-verb" id="get-the-first-verb"><h1>GET: the First Verb</h1></a>
+                        <a class="header" href="implementing_a_driver/get_the_first_verb.html#get-the-first-verb" id="get-the-first-verb"><h1>GET: the First Verb</h1></a>
 <p>I like to start my implementation with the first, least-destructive HTTP verb in mind: <code>GET</code>.</p>
 <p>So, let's get started developing our <code>Client</code> class. Why am I using a class here? Aside from the general <em>when in Rome ...</em> rule (though I'm told that it's almost bad form to do OOP in this OO language, by somebody who's probably trollin'), I have some plans down the line for how this client will be used. Also, our requirements flat out state that we need to keep track of some data: the base URL for the API and an authentication token.</p>
 <p>Let's start there! In <code>maury/client.py</code>, we'll put the following:</p>
@@ -139,7 +139,7 @@
         self.__token = token
 </code></pre>
 <p>There we go. We now have a <code>Client</code> class that accepts a base URL and a token. Our work is done!</p>
-<a class="header" href="ch02/01-get_the_first_verb.html#constructing-urls" id="constructing-urls"><h2>Constructing URLs</h2></a>
+<a class="header" href="implementing_a_driver/get_the_first_verb.html#constructing-urls" id="constructing-urls"><h2>Constructing URLs</h2></a>
 <p>Dangit. Okay. More work it is.</p>
 <p>Our requirements say that we need to be able to construct URLs based off of a relative endpoint path. So, let's do that in <code>maury/client.py</code>, too:</p>
 <pre><code class="language-python">from furl import furl
@@ -174,7 +174,7 @@ class Client(object):
         return u.url
 </code></pre>
 <p>Well, that was easy. That's two requirements down ... let's go for a third.</p>
-<a class="header" href="ch02/01-get_the_first_verb.html#speaking-http" id="speaking-http"><h2>Speaking HTTP</h2></a>
+<a class="header" href="implementing_a_driver/get_the_first_verb.html#speaking-http" id="speaking-http"><h2>Speaking HTTP</h2></a>
 <p>We need to be able to speak HTTP! Back to <code>maury/client.py</code>:</p>
 <pre><code class="language-python">from furl import furl
 import requests
@@ -210,7 +210,7 @@ class Client(object):
         return u.url
 </code></pre>
 <p>It's almost cheating, but simply importing the <code>requests</code> package means that we can speak HTTP in this module. Moving on ...</p>
-<a class="header" href="ch02/01-get_the_first_verb.html#http-get" id="http-get"><h2>HTTP GET</h2></a>
+<a class="header" href="implementing_a_driver/get_the_first_verb.html#http-get" id="http-get"><h2>HTTP GET</h2></a>
 <p>This might be the most complicated requirement that we've tackled so far, and it's not the lowest-hanging fruit on the list of remaining requirements, but it makes sense to do this next because of reasons.</p>
 <p>So, let's implement the first public method in our <code>Client</code> class: <code>get</code>:</p>
 <pre><code class="language-python">from furl import furl
@@ -265,7 +265,7 @@ class Client(object):
 <li>It might not work: we are assuming that the API is always in top notch operational condition and that we are always sending a valid request ... there is no error handling at all</li>
 </ul>
 <p>Let's fix those in that order.</p>
-<a class="header" href="ch02/01-get_the_first_verb.html#authentication" id="authentication"><h2>Authentication</h2></a>
+<a class="header" href="implementing_a_driver/get_the_first_verb.html#authentication" id="authentication"><h2>Authentication</h2></a>
 <p>So, in order to provide our authentication token to the API, we either have to pass it in as part of the query string, or we have to set the <code>X-EY-TOKEN</code> header. Between the two of these, the header option is more secure and just plain less messy, so let's do that.</p>
 <pre><code class="language-python">from furl import furl
 import requests
@@ -308,7 +308,7 @@ class Client(object):
         return response.text
 </code></pre>
 <p>That's taken care of. Next up is to specify the API version.</p>
-<a class="header" href="ch02/01-get_the_first_verb.html#api-version" id="api-version"><h2>API Version</h2></a>
+<a class="header" href="implementing_a_driver/get_the_first_verb.html#api-version" id="api-version"><h2>API Version</h2></a>
 <p>In order to specify the version of the API that we want to use, we have to pass it in as part of the <code>Accept</code> header.</p>
 <pre><code class="language-python">from furl import furl
 import requests
@@ -354,7 +354,7 @@ class Client(object):
         return response.text
 </code></pre>
 <p>We specified the heck out of that API version, I reckon. One more to go!</p>
-<a class="header" href="ch02/01-get_the_first_verb.html#api-error-handling" id="api-error-handling"><h2>API Error Handling</h2></a>
+<a class="header" href="implementing_a_driver/get_the_first_verb.html#api-error-handling" id="api-error-handling"><h2>API Error Handling</h2></a>
 <p>This one might seem a bit weird if you're actually familiar with Python, but since I'm not particularly, I'm going to do the thing that makes the most sense to me, heavily influenced by other languages that I know better.</p>
 <p>You see, the thing here is that I don't actually know much about how to handle exceptions in Python, and I actually don't like using exceptions for error handling. Some of my favorite languages use some form of multiple return for error handling. While I could do that with a <code>list</code> or a <code>tuple</code>, there's a technique that I prefer: let's make a <code>Result</code> class in <code>maury/result.py</code>:</p>
 <pre><code class="language-python">class Result(object):
@@ -451,7 +451,7 @@ class Client(object):
                 )
 </code></pre>
 <p>There we go. This feels more like something that will actually work. I should probably prove that with some tests ...</p>
-<a class="header" href="ch02/01-get_the_first_verb.html#testing-the-client" id="testing-the-client"><h2>Testing the Client</h2></a>
+<a class="header" href="implementing_a_driver/get_the_first_verb.html#testing-the-client" id="testing-the-client"><h2>Testing the Client</h2></a>
 <p>Usually, I do most all of my development in a test-driven (or test-first) manner, but when I'm learning a new language, I prefer to get used to the language before I try to get used to its testing mechanisms. At any rate, let's write our first test.</p>
 <p>Since we're testing the client, we should probably figure out a way to mock out the actual HTTP requests. Otherwise, we're going to have to be online to run our tests, which is kind of a drag. It turns out, though, that <a href="http://requests-mock.readthedocs.io/en/latest/">requests-mock</a> is a thing, so let's pull that into our test requirements in <code>setup.py</code>:</p>
 <pre><code class="language-python">from setuptools import setup
@@ -526,7 +526,7 @@ class TestResult(TestCase):
 <pre><code>test_get (maury.tests.test_client.TestResult) ... ok
 </code></pre>
 <p>That sounds like a winner in my book. There are still a few things we should straighten out before we move on, though. First thing being first ... textual responses are fine and all, but we're really more interested in JSON responses.</p>
-<a class="header" href="ch02/01-get_the_first_verb.html#json" id="json"><h2>JSON</h2></a>
+<a class="header" href="implementing_a_driver/get_the_first_verb.html#json" id="json"><h2>JSON</h2></a>
 <p>The <code>requests</code> package is nice enough to automagically convert JSON responses for us, so let's change the tests for that.</p>
 <pre><code class="language-python">from unittest import TestCase
 import requests_mock
@@ -627,7 +627,7 @@ class Client(object):
 </code></pre>
 <p>Now that we've updated the client, the tests pass again. Sometimes, I do love developering. As you can see, we've also specified that we would like JSON back in our responses via the headers for the request.</p>
 <p>There's one last bit of business to take care of before we consider this iteration complete.</p>
-<a class="header" href="ch02/01-get_the_first_verb.html#revisiting-result" id="revisiting-result"><h2>Revisiting Result</h2></a>
+<a class="header" href="implementing_a_driver/get_the_first_verb.html#revisiting-result" id="revisiting-result"><h2>Revisiting Result</h2></a>
 <p>The <code>Result</code> class looks good. It gives us a clean way to communicate back to the code that's using our <code>Client</code>. But does it? We should illustrate that with a test in <code>tests/test_result.py</code>:</p>
 <pre><code class="language-python">from unittest import TestCase
 
@@ -665,13 +665,13 @@ class TestResult(TestCase):
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
-                            <a rel="prev" href="ch02/00-implementing_a_driver.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="implementing_a_driver/overview.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
                         
 
                         
-                            <a rel="next" href="ch02/02-post_the_reverbening.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="implementing_a_driver/post_the_reverbening.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
@@ -683,13 +683,13 @@ class TestResult(TestCase):
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
-                    <a href="ch02/00-implementing_a_driver.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a href="implementing_a_driver/overview.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
 
                 
-                    <a href="ch02/02-post_the_reverbening.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a href="implementing_a_driver/post_the_reverbening.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 
