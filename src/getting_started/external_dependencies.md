@@ -39,7 +39,6 @@ install_requires=[
 tests_require = [
     'mock',
     'nose',
-    'requests-mock',
     ]
 
 setup(
