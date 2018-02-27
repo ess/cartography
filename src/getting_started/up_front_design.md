@@ -27,6 +27,6 @@ What we're going to do is to break this API client project into two main phases:
 
 Before we move forward, the hardest part of the whole project needs to be done: we need to name the project. In keeping with the naming for my other EY API client implementations, I've called this project [maury](https://en.wikipedia.org/wiki/Maurice_W._Graham), but you can call it anything that you'd like.
 
-With that, let's take be a bit proactive and determine the external dependencies that we want to use for the project.
+With that, let's be a bit proactive and determine the external dependencies that we want to use for the project.
 
 
