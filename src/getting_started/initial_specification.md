@@ -23,7 +23,7 @@ Technically, all of the things that we need in order to implement the core clien
 
 Additionally, after a bit of quick playing around with the URL parser provided by the standard library, I learned that I can't actually use it to build a URL, which is at least a little important, given that we need to build a URL for every request that the driver handles. More googling led me to the [furl](https://github.com/gruns/furl) package.
 
-Finally, we're going to use [nose](http://nose.readthedocs.io/en/latest/) to make writing and running our tests easier. Oh, yeah, we're testing. I'd hate for [Bryan Liles](https://twitter.com/bryanl) to come after me for showing you how to do this stuff without showing you how I TAFT.
+Finally, we're going to use [nose](http://nose.readthedocs.io/en/latest/) to make writing and running our tests easier. Oh, yeah, we're testing. I'd hate for [Bryan Liles](https://twitter.com/bryanl) to come after me for showing you how to do this stuff without showing you how I [TATFT](https://www.youtube.com/watch?v=iwUR0kOVNs8).
 
 So, now that we have some requirements, let's add them to our `setup.py`:
 
