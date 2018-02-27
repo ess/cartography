@@ -11,7 +11,7 @@ We already have a name for the project. Now that the hardest part of any project
 * It must speak HTTP
 * It must accept an authentication token
 * For the sake of flexibility, it should also accept the base URL for the API
-* It must be able to use the HTTP verbs in question
+* It must be able to use the HTTP verbs in question: `GET`, `POST`, `PUT`, `PATCH`, and `DELETE`
 * It must be able to set the `X-EY-TOKEN`, `Content-Type`, and `Accept` headers
 * For convenience, it should treat all requests as relative, so it must be able to build URLs for each request
 
