@@ -120,7 +120,19 @@
 
                 <div id="content" class="content">
                     <main>
-                        <a class="header" href="print.html#howdy" id="howdy"><h1>Howdy</h1></a>
+                        <a class="header" href="print.html#howdy" id="howdy"><h1>Howdy!</h1></a>
+<p>Have you ever wanted to create your very own client for a REST API? That's what this book is all about.</p>
+<p>Why &quot;cartography?&quot; Well, a lot of the REST APIs out there, regardless of how well documented they may be, require for us to do a bit of journeying and mapping along the way to figure out how things really work. A lot of the time, the API provider will go ahead and publish clients for the popular languages of the day because of the above conundrum, but that isn't always the case.</p>
+<p>For example, the <a href="https://developer.engineyard.com">Engine Yard API</a> is relatively well-documented, and Engine Yard does provide <a href="https://github.com/engineyard/core-client-rb">a Ruby client</a>, but what if I want to consume this API from a Python program?</p>
+<p>That is the example that we'll use for the purposes of this illustration: implementing a Python client for the Engine Yard API. That said, the techniques used here should be fairly easily adapated to most any language or API.</p>
+<a class="header" href="print.html#a-few-caveats" id="a-few-caveats"><h2>A Few Caveats</h2></a>
+<p>As seems to be the case with all books like this one, there are a few things that should probably be stated up front:</p>
+<ul>
+<li>I'm currently employed by <a href="https://www.engineyard.com">Engine Yard</a> as a Professional Services Engineer, which is really just a fancy way to say that I do the &quot;whatever it takes&quot; on behalf of customers that need very custom setups. The use of the Engine Yard API as the example for this book is mostly because it is a somehat complicated (to the point of being difficult) API to consume.</li>
+<li>This very much is not the only way that one could develop an API client. This is, however, the method that I prefer, so I'm rolling with it.</li>
+<li>Python is being used as the implementation language in this book, but this is just an example of a language that is not officially supported by the API provider. As it were, there are partial implementations of the client that is being developed in this book in the following languages: Go, Javascript, ooc, Ruby, Rust</li>
+<li>I don't actually know Python, so this will be a learning experience for me as well. I'm using Python 3.6.4 locally to develop this client as we go, but it's important to note that this should probably not be considered an example of idiomatic Python code, let alone high-quality Python code. I honestly don't know Python well enough to even be able to make that previous statement.</li>
+</ul>
 <a class="header" href="print.html#getting-started" id="getting-started"><h1>Getting Started</h1></a>
 <p>This chapter is all about doing the very first things that I do when staring this sort of project. It's not really about installing Python, setting up a new project space, or anything like that. More so, it's about what happens after all of those things.</p>
 <p>The first step in the process, at least for me, is to take a look at whatever documentation may exist for the API that I'm trying to map to see if I can find some basic hints for its usage.</p>
