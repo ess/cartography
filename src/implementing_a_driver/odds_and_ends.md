@@ -17,7 +17,7 @@ import maury
 
 class TestNewClient(TestCase):
     def test_is_client(self):
-        s = maury.new_client('https://example.com', 'token12345')
+        s = maury.new_client(token = 'token12345')
         self.assertIsInstance(s, maury.Client)
 ```
 
