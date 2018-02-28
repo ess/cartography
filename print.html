@@ -1260,8 +1260,15 @@ class TestNewClient(TestCase):
 <p>That's a pretty simple test (almost too simple, really), but it will do for our purposes right now. What's more, it fails if we try to run our tests right now, so we're definitely on the right track! Let's go ahead and implement this function in <code>maury/__init__.py</code>:</p>
 <pre><code class="language-python">from .client import Client
 
-def new_client(base_url, token):
-    return Client(base_url, token)
+def new_client(base_url = 'https://api.engineyard.com', token = None):
+    &quot;&quot;&quot;Create a new client driver instance.
+    
+    Keyword arguments:
+    base_url -- the base URL of the API (default: 'https://api.engineyard.com')
+    token -- the API authentication token (default: None)
+    &quot;&quot;&quot;
+
+    return Client(base_url = base_url, token = token)
 </code></pre>
 <a class="header" href="print.html#conclusion" id="conclusion"><h2>Conclusion</h2></a>
 <p>Now we have a <em>somewhat friendly</em> and complete driver for the API that we're mapping. That's it for Phase 1, and now we're ready to move on to Phase 2.</p>
