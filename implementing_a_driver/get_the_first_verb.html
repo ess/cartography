@@ -128,15 +128,16 @@
     &quot;&quot;&quot;A base driver that talks to the Engine Yard API&quot;&quot;&quot;
 
     def __init__(self, base_url = 'https://api.engineyard.com', token = None):
-        &quot;&quot;&quot;Set up a Client instance
-
-        Positional arguments:
+        &quot;&quot;&quot;Instantiate a new Client instance
+        
+        Keyword arguments:
         base_url -- the base URL of the API (default: 'https://api.engineyard.com')
         token -- the API authentication token (default: None)
         &quot;&quot;&quot;
 
         self.__base_url = base_url
         self.__token = token
+
 </code></pre>
 <p>There we go. We now have a <code>Client</code> class that accepts a base URL and a token. Our work is done!</p>
 <a class="header" href="implementing_a_driver/get_the_first_verb.html#constructing-urls" id="constructing-urls"><h2>Constructing URLs</h2></a>
@@ -147,12 +148,12 @@
 class Client(object):
     &quot;&quot;&quot;A base driver that talks to the Engine Yard API&quot;&quot;&quot;
 
-    def __init__(self, base_url, token):
-        &quot;&quot;&quot;Set up a Client instance
-
-        Positional arguments:
-        base_url -- the base URL of the API
-        token -- the API authentication token
+    def __init__(self, base_url = 'https://api.engineyard.com', token = None):
+        &quot;&quot;&quot;Instantiate a new Client instance
+        
+        Keyword arguments:
+        base_url -- the base URL of the API (default: 'https://api.engineyard.com')
+        token -- the API authentication token (default: None)
         &quot;&quot;&quot;
 
         self.__base_url = base_url
@@ -172,6 +173,7 @@ class Client(object):
 
         # Return the modified URL
         return u.url
+
 </code></pre>
 <p>Well, that was easy. That's two requirements down ... let's go for a third.</p>
 <a class="header" href="implementing_a_driver/get_the_first_verb.html#speaking-http" id="speaking-http"><h2>Speaking HTTP</h2></a>
@@ -182,14 +184,13 @@ import requests
 class Client(object):
     &quot;&quot;&quot;A base driver that talks to the Engine Yard API&quot;&quot;&quot;
 
-    def __init__(self, base_url, token):
-        &quot;&quot;&quot;Set up a Client instance
-
-        Positional arguments:
-        base_url -- the base URL of the API
-        token -- the API authentication token
+    def __init__(self, base_url = 'https://api.engineyard.com', token = None):
+        &quot;&quot;&quot;Instantiate a new Client instance
+        
+        Keyword arguments:
+        base_url -- the base URL of the API (default: 'https://api.engineyard.com')
+        token -- the API authentication token (default: None)
         &quot;&quot;&quot;
-
 
         self.__base_url = base_url
         self.__token = token
@@ -208,6 +209,7 @@ class Client(object):
 
         # Return the modified URL
         return u.url
+
 </code></pre>
 <p>It's almost cheating, but simply importing the <code>requests</code> package means that we can speak HTTP in this module. Moving on ...</p>
 <a class="header" href="implementing_a_driver/get_the_first_verb.html#http-get" id="http-get"><h2>HTTP GET</h2></a>
@@ -219,14 +221,13 @@ import requests
 class Client(object):
     &quot;&quot;&quot;A base driver that talks to the Engine Yard API&quot;&quot;&quot;
 
-    def __init__(self, base_url, token):
-        &quot;&quot;&quot;Set up a Client instance
-
-        Positional arguments:
-        base_url -- the base URL of the API
-        token -- the API authentication token
+    def __init__(self, base_url = 'https://api.engineyard.com', token = None):
+        &quot;&quot;&quot;Instantiate a new Client instance
+        
+        Keyword arguments:
+        base_url -- the base URL of the API (default: 'https://api.engineyard.com')
+        token -- the API authentication token (default: None)
         &quot;&quot;&quot;
-
 
         self.__base_url = base_url
         self.__token = token
@@ -246,17 +247,24 @@ class Client(object):
         # Return the modified URL
         return u.url
 
-    def get(self, path, params):
+    def get(self, path, params = None):
         &quot;&quot;&quot;Perform an HTTP GET on the API.
-        
+
         Given an endpoint path and a dictionary of parameters, send the request
-        to the API and return the result.
+        to the aPI and return the result.
+
+        Positional arguments:
+        path -- the path of the API endpoint to GET
+
+        Keyword arguments:
+        params -- a dictionary of query params (default: None)
         &quot;&quot;&quot;
 
-        r = requests.get(self.__construct_request_url(path),
-                params=params)
+        response = requests.get(self.__construct_request_url(path),
+                params = params)
 
         return response.text
+
 </code></pre>
 <p>That's fine and good, and it technically fulfills the <code>implements HTTP GET</code> requirement, but there are a few problems with this implementation:</p>
 <ul>
@@ -267,14 +275,20 @@ class Client(object):
 <p>Let's fix those in that order.</p>
 <a class="header" href="implementing_a_driver/get_the_first_verb.html#authentication" id="authentication"><h2>Authentication</h2></a>
 <p>So, in order to provide our authentication token to the API, we either have to pass it in as part of the query string, or we have to set the <code>X-EY-TOKEN</code> header. Between the two of these, the header option is more secure and just plain less messy, so let's do that.</p>
+<p>}}</p>
 <pre><code class="language-python">from furl import furl
 import requests
 
 class Client(object):
     &quot;&quot;&quot;A base driver that talks to the Engine Yard API&quot;&quot;&quot;
 
-    def __init__(self, base_url, token):
-        &quot;&quot;&quot;Set the base_url and token for a new Client instance&quot;&quot;&quot;
+    def __init__(self, base_url = 'https://api.engineyard.com', token = None):
+        &quot;&quot;&quot;Instantiate a new Client instance
+        
+        Keyword arguments:
+        base_url -- the base URL of the API (default: 'https://api.engineyard.com')
+        token -- the API authentication token (default: None)
+        &quot;&quot;&quot;
 
         self.__base_url = base_url
         self.__token = token
@@ -294,18 +308,25 @@ class Client(object):
         # Return the modified URL
         return u.url
 
-    def get(self, path, params):
+    def get(self, path, params = None):
         &quot;&quot;&quot;Perform an HTTP GET on the API.
-        
+
         Given an endpoint path and a dictionary of parameters, send the request
-        to the API and return the result.
+        to the aPI and return the result.
+
+        Positional arguments:
+        path -- the path of the API endpoint to GET
+
+        Keyword arguments:
+        params -- a dictionary of query params (default: None)
         &quot;&quot;&quot;
 
-        r = requests.get(self.__construct_request_url(path),
+        response = requests.get(self.__construct_request_url(path),
                 params = params,
                 headers = {'X-EY-TOKEN' : self.__token})
 
         return response.text
+
 </code></pre>
 <p>That's taken care of. Next up is to specify the API version.</p>
 <a class="header" href="implementing_a_driver/get_the_first_verb.html#api-version" id="api-version"><h2>API Version</h2></a>
@@ -316,8 +337,13 @@ import requests
 class Client(object):
     &quot;&quot;&quot;A base driver that talks to the Engine Yard API&quot;&quot;&quot;
 
-    def __init__(self, base_url, token):
-        &quot;&quot;&quot;Set the base_url and token for a new Client instance&quot;&quot;&quot;
+    def __init__(self, base_url = 'https://api.engineyard.com', token = None):
+        &quot;&quot;&quot;Instantiate a new Client instance
+        
+        Keyword arguments:
+        base_url -- the base URL of the API (default: 'https://api.engineyard.com')
+        token -- the API authentication token (default: None)
+        &quot;&quot;&quot;
 
         self.__base_url = base_url
         self.__token = token
@@ -337,14 +363,20 @@ class Client(object):
         # Return the modified URL
         return u.url
 
-    def get(self, path, params):
+    def get(self, path, params = None):
         &quot;&quot;&quot;Perform an HTTP GET on the API.
-        
+
         Given an endpoint path and a dictionary of parameters, send the request
-        to the API and return the result.
+        to the aPI and return the result.
+
+        Positional arguments:
+        path -- the path of the API endpoint to GET
+
+        Keyword arguments:
+        params -- a dictionary of query params (default: None)
         &quot;&quot;&quot;
 
-        r = requests.get(self.__construct_request_url(path),
+        response = requests.get(self.__construct_request_url(path),
                 params = params,
                 headers = {
                     'X-EY-TOKEN' : self.__token,
@@ -352,6 +384,7 @@ class Client(object):
                     })
 
         return response.text
+
 </code></pre>
 <p>We specified the heck out of that API version, I reckon. One more to go!</p>
 <a class="header" href="implementing_a_driver/get_the_first_verb.html#api-error-handling" id="api-error-handling"><h2>API Error Handling</h2></a>
@@ -398,6 +431,7 @@ class Client(object):
     def error(self):
         &quot;&quot;&quot;The negative result content&quot;&quot;&quot;
         return self.__error
+
 </code></pre>
 <p>Now that we have a way to express both positive and negative results, let's tie it in and use it in our <code>Client</code>:</p>
 <pre><code class="language-python">from furl import furl
@@ -407,8 +441,13 @@ from .result import Result
 class Client(object):
     &quot;&quot;&quot;A base driver that talks to the Engine Yard API&quot;&quot;&quot;
 
-    def __init__(self, base_url, token):
-        &quot;&quot;&quot;Set the base_url and token for a new Client instance&quot;&quot;&quot;
+    def __init__(self, base_url = 'https://api.engineyard.com', token = None):
+        &quot;&quot;&quot;Instantiate a new Client instance
+        
+        Keyword arguments:
+        base_url -- the base URL of the API (default: 'https://api.engineyard.com')
+        token -- the API authentication token (default: None)
+        &quot;&quot;&quot;
 
         self.__base_url = base_url
         self.__token = token
@@ -428,27 +467,35 @@ class Client(object):
         # Return the modified URL
         return u.url
 
-    def get(self, path, params):
+    def get(self, path, params = None):
         &quot;&quot;&quot;Perform an HTTP GET on the API.
-        
+
         Given an endpoint path and a dictionary of parameters, send the request
-        to the API and return the result.
+        to the aPI and return the result.
+
+        Positional arguments:
+        path -- the path of the API endpoint to GET
+
+        Keyword arguments:
+        params -- a dictionary of query params (default: None)
         &quot;&quot;&quot;
 
-        r = requests.get(self.__construct_request_url(path),
+        response = requests.get(self.__construct_request_url(path),
                 params = params,
                 headers = {
                     'X-EY-TOKEN' : self.__token,
                     'accept' : 'application/vnd.engineyard.v3+json',
                     })
 
-        if r.ok:
-            return Result(r.text, None)
+        if response.ok:
+            return Result(response.text, None)
 
         return Result(
                 None,
-                &quot;The API returned the following status: %d&quot; % r.status_code
+                &quot;The API returned the following status: %d&quot; % response.status_code
                 )
+
+
 </code></pre>
 <p>There we go. This feels more like something that will actually work. I should probably prove that with some tests ...</p>
 <a class="header" href="implementing_a_driver/get_the_first_verb.html#testing-the-client" id="testing-the-client"><h2>Testing the Client</h2></a>
@@ -477,6 +524,7 @@ setup(
         tests_require = tests_require,
         test_suite = &quot;nose.collector&quot;,
         zip_safe = False)
+
 </code></pre>
 <p>So far, so good. Now let's try actually writing a test or two in <code>tests/test_client.py</code>:</p>
 <pre><code class="language-python">from unittest import TestCase
@@ -484,21 +532,21 @@ import requests_mock
 
 from maury.client import Client
 
-class TestResult(TestCase):
+class TestClient(TestCase):
     @requests_mock.Mocker()
     def test_get(self, m):
         # The happy path
         m.get('https://api.engineyard.com/sausages', text='gold')
 
-        c = Client('https://api.engineyard.com', 'faketoken')
-        result = c.get('sausages', None)
+        c = Client(token = 'faketoken')
+        result = c.get('sausages')
         self.assertTrue(result.ok)
         self.assertEqual(result.body, 'gold')
 
         # The happy path with params
         m.get('https://api.engineyard.com/sausages?color=gold', text='yep')
 
-        result = c.get('sausages', {'color' : 'gold'})
+        result = c.get('sausages', params = {'color' : 'gold'})
         self.assertTrue(result.ok)
         self.assertEqual(result.body, 'yep')
 
@@ -508,7 +556,7 @@ class TestResult(TestCase):
                 status_code = 500,
                 text = 'Drop your weapon. You have 20 seconds to comply.')
 
-        result = c.get('ed209', None)
+        result = c.get('ed209')
         self.assertFalse(result.ok)
         self.assertFalse(result.error == None)
 
@@ -518,9 +566,10 @@ class TestResult(TestCase):
                 status_code = 404,
                 text = 'You are now staring into the void. It is staring back.')
 
-        result = c.get('404', None)
+        result = c.get('404')
         self.assertFalse(result.ok)
         self.assertFalse(result.error == None)
+
 </code></pre>
 <p>When we run our tests with <code>python setup.py test</code>, we get (along with a ton of noise) the following output:</p>
 <pre><code>test_get (maury.tests.test_client.TestResult) ... ok
@@ -533,14 +582,14 @@ import requests_mock
 
 from maury.client import Client
 
-class TestResult(TestCase):
+class TestClient(TestCase):
     @requests_mock.Mocker()
     def test_get(self, m):
         # The happy path
-        m.get('https://api.engineyard.com/sausages', text='{&quot;sausages&quot;:&quot;gold&quot;}')
+        m.get('https://api.engineyard.com/sausages', text='{&quot;sausaged&quot;:&quot;gold&quot;}')
 
-        c = Client('https://api.engineyard.com', 'faketoken')
-        result = c.get('sausages', None)
+        c = Client(token = 'faketoken')
+        result = c.get('sausages')
         self.assertTrue(result.ok)
         self.assertEqual(result.body, {'sausages' : 'gold'})
 
@@ -549,7 +598,7 @@ class TestResult(TestCase):
                 'https://api.engineyard.com/sausages?color=gold',
                 text='{&quot;sausages&quot;:&quot;yep&quot;}')
 
-        result = c.get('sausages', {'color' : 'gold'})
+        result = c.get('sausages', params = {'color' : 'gold'})
         self.assertTrue(result.ok)
         self.assertEqual(result.body, {'sausages' : 'yep'})
 
@@ -559,7 +608,7 @@ class TestResult(TestCase):
                 status_code = 500,
                 text = 'Drop your weapon. You have 20 seconds to comply.')
 
-        result = c.get('ed209', None)
+        result = c.get('ed209')
         self.assertFalse(result.ok)
         self.assertFalse(result.error == None)
 
@@ -569,9 +618,10 @@ class TestResult(TestCase):
                 status_code = 404,
                 text = 'You are now staring into the void. It is staring back.')
 
-        result = c.get('404', None)
+        result = c.get('404')
         self.assertFalse(result.ok)
         self.assertFalse(result.error == None)
+
 </code></pre>
 <p>If we run the tests right now, we get failures. That's because we changed the test specification, but we haven't changed the code yet. That's awesome, because that's the sort of test-driven thing that allows us to actually change the code intentionally (rather than otherwise). So, let's intentionally change <code>maury/client.py</code> so we get JSON in our results instead of raw text:</p>
 <pre><code class="language-python">from furl import furl
@@ -581,8 +631,13 @@ from .result import Result
 class Client(object):
     &quot;&quot;&quot;A base driver that talks to the Engine Yard API&quot;&quot;&quot;
 
-    def __init__(self, base_url, token):
-        &quot;&quot;&quot;Set the base_url and token for a new Client instance&quot;&quot;&quot;
+    def __init__(self, base_url = 'https://api.engineyard.com', token = None):
+        &quot;&quot;&quot;Instantiate a new Client instance
+        
+        Keyword arguments:
+        base_url -- the base URL of the API (default: 'https://api.engineyard.com')
+        token -- the API authentication token (default: None)
+        &quot;&quot;&quot;
 
         self.__base_url = base_url
         self.__token = token
@@ -602,14 +657,20 @@ class Client(object):
         # Return the modified URL
         return u.url
 
-    def get(self, path, params):
+    def get(self, path, params = None):
         &quot;&quot;&quot;Perform an HTTP GET on the API.
-        
+
         Given an endpoint path and a dictionary of parameters, send the request
-        to the API and return the result.
+        to the aPI and return the result.
+
+        Positional arguments:
+        path -- the path of the API endpoint to GET
+
+        Keyword arguments:
+        params -- a dictionary of query params (default: None)
         &quot;&quot;&quot;
 
-        r = requests.get(self.__construct_request_url(path),
+        response = requests.get(self.__construct_request_url(path),
                 params = params,
                 headers = {
                     'X-EY-TOKEN' : self.__token,
@@ -617,13 +678,15 @@ class Client(object):
                     'content-type' : 'application/json',
                     })
 
-        if r.ok:
-            return Result(r.json(), None)
+        if response.ok:
+            return Result(response.json(), None)
 
         return Result(
                 None,
-                &quot;The API returned the following status: %d&quot; % r.status_code
+                &quot;The API returned the following status: %d&quot; % response.status_code
                 )
+
+
 </code></pre>
 <p>Now that we've updated the client, the tests pass again. Sometimes, I do love developering. As you can see, we've also specified that we would like JSON back in our responses via the headers for the request.</p>
 <p>There's one last bit of business to take care of before we consider this iteration complete.</p>
@@ -657,6 +720,8 @@ class TestResult(TestCase):
         result = Result(body, error)
 
         self.assertEqual(result.error, error)
+
+
 </code></pre>
 <p>That does it. If all our client ever has to do is provide the ability to make <code>GET</code> requests against the API, we're done!</p>
 

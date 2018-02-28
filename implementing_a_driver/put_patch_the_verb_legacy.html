@@ -129,8 +129,8 @@
         # The happy path
         m.put('https://api.engineyard.com/sausages', text='{&quot;sausages&quot;:&quot;gold&quot;}')
 
-        c = Client('https://api.engineyard.com', 'faketoken')
-        result = c.put('sausages', None, None)
+        c = Client(token = 'faketoken')
+        result = c.put('sausages')
         self.assertTrue(result.ok)
         self.assertEqual(result.body, {'sausages' : 'gold'})
 
@@ -139,7 +139,7 @@
                 'https://api.engineyard.com/sausages?color=gold',
                 text='{&quot;sausages&quot;:&quot;yep&quot;}')
 
-        result = c.put('sausages', {'color' : 'gold'}, None)
+        result = c.put('sausages', params = {'color' : 'gold'})
         self.assertTrue(result.ok)
         self.assertEqual(result.body, {'sausages' : 'yep'})
 
@@ -149,7 +149,7 @@
                 status_code = 500,
                 text = 'Drop your weapon. You have 20 seconds to comply.')
 
-        result = c.put('ed209', None, None)
+        result = c.put('ed209')
         self.assertFalse(result.ok)
         self.assertFalse(result.error == None)
 
@@ -159,7 +159,7 @@
                 status_code = 404,
                 text = 'You are now staring into the void. It is staring back.')
 
-        result = c.put('404', None, None)
+        result = c.put('404')
         self.assertFalse(result.ok)
         self.assertFalse(result.error == None)
 
@@ -168,8 +168,8 @@
         # The happy path
         m.patch('https://api.engineyard.com/sausages', text='{&quot;sausages&quot;:&quot;gold&quot;}')
 
-        c = Client('https://api.engineyard.com', 'faketoken')
-        result = c.patch('sausages', None, None)
+        c = Client(token = 'faketoken')
+        result = c.patch('sausages')
         self.assertTrue(result.ok)
         self.assertEqual(result.body, {'sausages' : 'gold'})
 
@@ -178,7 +178,7 @@
                 'https://api.engineyard.com/sausages?color=gold',
                 text='{&quot;sausages&quot;:&quot;yep&quot;}')
 
-        result = c.patch('sausages', {'color' : 'gold'}, None)
+        result = c.patch('sausages', params = {'color' : 'gold'})
         self.assertTrue(result.ok)
         self.assertEqual(result.body, {'sausages' : 'yep'})
 
@@ -188,7 +188,7 @@
                 status_code = 500,
                 text = 'Drop your weapon. You have 20 seconds to comply.')
 
-        result = c.patch('ed209', None, None)
+        result = c.patch('ed209')
         self.assertFalse(result.ok)
         self.assertFalse(result.error == None)
 
@@ -198,18 +198,25 @@
                 status_code = 404,
                 text = 'You are now staring into the void. It is staring back.')
 
-        result = c.patch('404', None, None)
+        result = c.patch('404')
         self.assertFalse(result.ok)
         self.assertFalse(result.error == None)
 </code></pre>
 <p>As expected, these tests fail, as we don't yet have either the <code>put</code> or <code>patch</code> mehods in our client.</p>
 <a class="header" href="implementing_a_driver/put_patch_the_verb_legacy.html#implementing-the-methods" id="implementing-the-methods"><h2>Implementing the Methods</h2></a>
 <p>So, let's crack open <code>maury/client.py</code> again, copypasta the <code>post</code> method, and modify it to fit our new methods:</p>
-<pre><code class="language-python">    def put(self, path, params, data):
+<pre><code class="language-python">    def put(self, path, params = None, data = None):
         &quot;&quot;&quot;Perform an HTTP PUT on the API.
         
         Given an endpoint path, a dictionary of parameters, and a dictionary of
         PUT data, send the request to the API and return the result.
+
+        Positional arguments:
+        path -- the path of the API endpoint you wish to PUT
+
+        Keyword arguments:
+        params -- a dictionary of query params (default: None)
+        data -- a dictionary of PUT data (default: None)
         &quot;&quot;&quot;
 
         r = requests.put(self.__construct_request_url(path),
@@ -219,11 +226,18 @@
 
         return self.__process_response(r)
 
-    def patch(self, path, params, data):
+    def patch(self, path, params = None, data = None):
         &quot;&quot;&quot;Perform an HTTP PATCH on the API.
         
         Given an endpoint path, a dictionary of parameters, and a dictionary of
         PATCH data, send the request to the API and return the result.
+
+        Positional arguments:
+        path -- the path of the API endpoint you wish to PATCH
+
+        Keyword arguments:
+        params -- a dictionary of query params (default: None)
+        data -- a dictionary of PATCH data (default: None)
         &quot;&quot;&quot;
 
         r = requests.patch(self.__construct_request_url(path),
