@@ -26,8 +26,15 @@ That's a pretty simple test (almost too simple, really), but it will do for our 
 ```python
 from .client import Client
 
-def new_client(base_url, token):
-    return Client(base_url, token)
+def new_client(base_url = 'https://api.engineyard.com', token = None):
+    """Create a new client driver instance.
+    
+    Keyword arguments:
+    base_url -- the base URL of the API (default: 'https://api.engineyard.com')
+    token -- the API authentication token (default: None)
+    """
+
+    return Client(base_url = base_url, token = token)
 ```
 
 ## Conclusion ##
