@@ -1254,7 +1254,7 @@ import maury
 
 class TestNewClient(TestCase):
     def test_is_client(self):
-        s = maury.new_client('https://example.com', 'token12345')
+        s = maury.new_client(token = 'token12345')
         self.assertIsInstance(s, maury.Client)
 </code></pre>
 <p>That's a pretty simple test (almost too simple, really), but it will do for our purposes right now. What's more, it fails if we try to run our tests right now, so we're definitely on the right track! Let's go ahead and implement this function in <code>maury/__init__.py</code>:</p>
