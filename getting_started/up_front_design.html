@@ -130,9 +130,9 @@
 <li>We need to be able to handle multiple endpoints on that API</li>
 </ul>
 <p>We'll break those down a bit further in a few minues, but before we do that, we should think a bit about the overall design of our client.</p>
+<a class="header" href="getting_started/up_front_design.html#our-design" id="our-design"><h2>Our Design</h2></a>
 <p>There are a few schools of thought as to what an API client should look like. At the extremes of that group are basically &quot;a library full of functions&quot; and &quot;a web ORM.&quot;</p>
 <p>I prefer something that's a bit between the two.</p>
-<a class="header" href="getting_started/up_front_design.html#our-design" id="our-design"><h2>Our Design</h2></a>
 <p>For most every API client that I've written, I've gone with a design that looks a lot like the Data Mapper pattern overlaid on top of a Repsitory. I'm not incredibly familiar with libraries that work this way outside of the Ruby community, but from that community, the best examples are probably <a href="http://rom-rb.org/">Ruby Object Mapper</a> and <a href="https://github.com/hanami/model">Hanami Model</a>.</p>
 <p>What we're going to do is to break this API client project into two main phases:</p>
 <ol>
