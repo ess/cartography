@@ -10,11 +10,11 @@ Now that we have some information about the API that we're mapping, we can start
 
 We'll break those down a bit further in a few minues, but before we do that, we should think a bit about the overall design of our client.
 
+## Our Design ##
+
 There are a few schools of thought as to what an API client should look like. At the extremes of that group are basically "a library full of functions" and "a web ORM."
 
 I prefer something that's a bit between the two.
-
-## Our Design ##
 
 For most every API client that I've written, I've gone with a design that looks a lot like the Data Mapper pattern overlaid on top of a Repsitory. I'm not incredibly familiar with libraries that work this way outside of the Ruby community, but from that community, the best examples are probably [Ruby Object Mapper](http://rom-rb.org/) and [Hanami Model](https://github.com/hanami/model).
 
