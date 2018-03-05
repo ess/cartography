@@ -166,7 +166,7 @@
         self.assertFalse(result.ok)
         self.assertFalse(result.error == None)
 </code></pre>
-<p>As you can see, our <code>post</code> test is almost identical to our <code>get</code> test. That's becuase, as mentioned above, all of the verbs are handled in more or less the same way. The big difference here is that <code>post</code> involves not just a path and a params dict, but also a dict of data to be <code>POST</code>ed to the endpoint.</p>
+<p>As you can see, our <code>post</code> test is almost identical to our <code>get</code> test. That's because, as mentioned above, all of the verbs are handled in more or less the same way. The big difference here is that <code>post</code> involves not just a path and a params dict, but also a dict of data to be <code>POST</code>ed to the endpoint.</p>
 <p>After running our tests, we see that our <code>test_post</code> test yields an error. That's because we don't have a <code>post</code> method in our client yet. Let's do that.</p>
 <a class="header" href="implementing_a_driver/post_the_reverbening.html#first-draft-implementation" id="first-draft-implementation"><h2>First Draft Implementation</h2></a>
 <p>Since they test the same (aside from the extra argument), it stands to reason that <code>get</code> and <code>post</code> should have rather similar implementations. Let's do a quick copypasta in <code>maury/client.py</code> and see how that works out:</p>
@@ -208,6 +208,23 @@
 <pre><code>test_post (maury.tests.test_client.TestResult) ... ok
 </code></pre>
 <p>So, one could argue that we're done at this point, but there's something that's bugging me a bit about this implementation. Take a look at the <code>get</code> and <code>post</code> methods. Notice how similar they are? We should probably take this opportunity to go ahead and refactor those similarities away.</p>
+<a class="header" href="implementing_a_driver/post_the_reverbening.html#refactoring" id="refactoring"><h2>Refactoring?</h2></a>
+<p>For those not used to the term or the practice, refactoring is basically the act of rearranging the code within a program to increase the simplicity of the system without altering its behavior. That's not really the proper definition of the term, but that is the way that I think about it.</p>
+<p>There are a several interpretations one could use for &quot;simplicity&quot; in this context. I think about two things:</p>
+<ul>
+<li>How easy is it to figure out how the module works?</li>
+<li>How <em>smelly</em> is the code?</li>
+</ul>
+<p>Our client module is fairly small, and it's not very difficult to figure out how it works for the moment. However, it <strong><em>is</em></strong> slightly smelly due to the high degree of code duplication between the <code>get</code> and <code>post</code> methods. In addition to this, each of those high-duplication methods also have variant execution paths depending on the API response.</p>
+<p>We can't totally remove the duplicated code and those variant conditional execution paths, but we <strong><em>can</em></strong> minimize those smells by method extraction.</p>
+<p>Before we start, let's set some ground rules that we will use every time we refactor anything going forward:</p>
+<ul>
+<li>We <strong><em>MAY</em></strong> change the module that we're refactoring</li>
+<li>We <strong><em>MAY</em></strong> create new methods within the module</li>
+<li>We <strong><em>MAY</em></strong> create new modules and hand work off to them</li>
+<li>We <strong><em>MAY NOT</em></strong> alter our tests (otherwise, we're redesinging, not refactoring)</li>
+<li>We <strong><em>MUST</em></strong> have a passing test suite after every change (otherwise, we have broken our module)</li>
+</ul>
 <a class="header" href="implementing_a_driver/post_the_reverbening.html#refactoring-response-processor" id="refactoring-response-processor"><h2>Refactoring: Response Processor</h2></a>
 <p>So, one of the things that makes these two methods so similar, aside from all verbs being very similar in the first place, is that they both interpret the API response identically. That being the case, we can construct a common method to use for response processing in <code>maury/client.py</code>:</p>
 <pre><code class="language-python">    def __process_response(self, response):
@@ -330,7 +347,7 @@
 
 </code></pre>
 <p>What we did there was to store the headers dictionary directly in the client object as <code>__headers</code>. Also, since we don't use the token for anything else, we are no longer storing the token at all. Also, the tests still pass, so it looks like we're still good.</p>
-<a class="header" href="implementing_a_driver/post_the_reverbening.html#refacotring-whats-next" id="refacotring-whats-next"><h2>Refacotring: What's Next?</h2></a>
+<a class="header" href="implementing_a_driver/post_the_reverbening.html#refactoring-whats-next" id="refactoring-whats-next"><h2>Refactoring: What's Next?</h2></a>
 <p>Can we go further? Sure, we can, but at this point, we probably shouldn't.</p>
 <p>So far, all verb implementations have involved making an API request, then processing the API response. We have implemented less than half of the verbs that we have to implement, though.</p>
 <p>That being the case, let's follow the advice that I'd imagine Sandy Metz would give right now: let's just keep working on the requirements until we're <strong><em>sure</em></strong> that we can safely refactor further.</p>

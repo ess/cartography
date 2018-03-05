@@ -208,7 +208,7 @@
 <a class="header" href="print.html#our-design" id="our-design"><h2>Our Design</h2></a>
 <p>There are a few schools of thought as to what an API client should look like. At the extremes of that group are basically &quot;a library full of functions&quot; and &quot;a web ORM.&quot;</p>
 <p>I prefer something that's a bit between the two.</p>
-<p>For most every API client that I've written, I've gone with a design that looks a lot like the Data Mapper pattern overlaid on top of a Repsitory. I'm not incredibly familiar with libraries that work this way outside of the Ruby community, but from that community, the best examples are probably <a href="http://rom-rb.org/">Ruby Object Mapper</a> and <a href="https://github.com/hanami/model">Hanami Model</a>.</p>
+<p>For nearly every API client that I've written, I've gone with a design that looks a lot like the Data Mapper pattern overlaid on top of a Repository. I'm not incredibly familiar with libraries that work this way outside of the Ruby community. From that community, though, the best examples are probably <a href="http://rom-rb.org/">Ruby Object Mapper</a> and <a href="https://github.com/hanami/model">Hanami Model</a>.</p>
 <p>What we're going to do is to break this API client project into two main phases:</p>
 <ol>
 <li>First, we're going to create a HTTP driver that interfaces with the REST API. This driver is basically our doorway to all communication with the upstream API. It takes care of authentication, request and response handling, and is really the core of the whole deal.</li>
@@ -218,7 +218,7 @@
 <p>Before we move forward, the hardest part of the whole project needs to be done: we need to name the project. In keeping with the naming for my other EY API client implementations, I've called this project <a href="https://en.wikipedia.org/wiki/Maurice_W._Graham">maury</a>, but you can call it anything that you'd like.</p>
 <p>With that, let's be a bit proactive and determine the external dependencies that we want to use for the project.</p>
 <a class="header" href="print.html#external-dependencies" id="external-dependencies"><h1>External Dependencies</h1></a>
-<p>It might seem a bit like putting the cart before the horse, but being totally unfamiliar with Python and its support for the things that we already know our client needs to do, it seems like a good idea to go ahead and research how to do those things.</p>
+<p>It might seem a bit like putting the cart before the horse, but I'm not very familiar with Python at this point. It makes sense to do a bit of research to find out if it has support for the things that we already know our client needs to do.</p>
 <p>Technically, all of the things that we need in order to implement the core driver is provided in the Python standard library. After a bit of comparitive research, though, it seems that the non-standard options provided by the community might well be easier to use (and are often suggested over the standard library).</p>
 <p>So, let's take a look at the options.</p>
 <a class="header" href="print.html#http" id="http"><h2>HTTP</h2></a>
@@ -921,7 +921,7 @@ class TestResult(TestCase):
         self.assertFalse(result.ok)
         self.assertFalse(result.error == None)
 </code></pre>
-<p>As you can see, our <code>post</code> test is almost identical to our <code>get</code> test. That's becuase, as mentioned above, all of the verbs are handled in more or less the same way. The big difference here is that <code>post</code> involves not just a path and a params dict, but also a dict of data to be <code>POST</code>ed to the endpoint.</p>
+<p>As you can see, our <code>post</code> test is almost identical to our <code>get</code> test. That's because, as mentioned above, all of the verbs are handled in more or less the same way. The big difference here is that <code>post</code> involves not just a path and a params dict, but also a dict of data to be <code>POST</code>ed to the endpoint.</p>
 <p>After running our tests, we see that our <code>test_post</code> test yields an error. That's because we don't have a <code>post</code> method in our client yet. Let's do that.</p>
 <a class="header" href="print.html#first-draft-implementation" id="first-draft-implementation"><h2>First Draft Implementation</h2></a>
 <p>Since they test the same (aside from the extra argument), it stands to reason that <code>get</code> and <code>post</code> should have rather similar implementations. Let's do a quick copypasta in <code>maury/client.py</code> and see how that works out:</p>
@@ -963,6 +963,23 @@ class TestResult(TestCase):
 <pre><code>test_post (maury.tests.test_client.TestResult) ... ok
 </code></pre>
 <p>So, one could argue that we're done at this point, but there's something that's bugging me a bit about this implementation. Take a look at the <code>get</code> and <code>post</code> methods. Notice how similar they are? We should probably take this opportunity to go ahead and refactor those similarities away.</p>
+<a class="header" href="print.html#refactoring" id="refactoring"><h2>Refactoring?</h2></a>
+<p>For those not used to the term or the practice, refactoring is basically the act of rearranging the code within a program to increase the simplicity of the system without altering its behavior. That's not really the proper definition of the term, but that is the way that I think about it.</p>
+<p>There are a several interpretations one could use for &quot;simplicity&quot; in this context. I think about two things:</p>
+<ul>
+<li>How easy is it to figure out how the module works?</li>
+<li>How <em>smelly</em> is the code?</li>
+</ul>
+<p>Our client module is fairly small, and it's not very difficult to figure out how it works for the moment. However, it <strong><em>is</em></strong> slightly smelly due to the high degree of code duplication between the <code>get</code> and <code>post</code> methods. In addition to this, each of those high-duplication methods also have variant execution paths depending on the API response.</p>
+<p>We can't totally remove the duplicated code and those variant conditional execution paths, but we <strong><em>can</em></strong> minimize those smells by method extraction.</p>
+<p>Before we start, let's set some ground rules that we will use every time we refactor anything going forward:</p>
+<ul>
+<li>We <strong><em>MAY</em></strong> change the module that we're refactoring</li>
+<li>We <strong><em>MAY</em></strong> create new methods within the module</li>
+<li>We <strong><em>MAY</em></strong> create new modules and hand work off to them</li>
+<li>We <strong><em>MAY NOT</em></strong> alter our tests (otherwise, we're redesinging, not refactoring)</li>
+<li>We <strong><em>MUST</em></strong> have a passing test suite after every change (otherwise, we have broken our module)</li>
+</ul>
 <a class="header" href="print.html#refactoring-response-processor" id="refactoring-response-processor"><h2>Refactoring: Response Processor</h2></a>
 <p>So, one of the things that makes these two methods so similar, aside from all verbs being very similar in the first place, is that they both interpret the API response identically. That being the case, we can construct a common method to use for response processing in <code>maury/client.py</code>:</p>
 <pre><code class="language-python">    def __process_response(self, response):
@@ -1085,12 +1102,12 @@ class TestResult(TestCase):
 
 </code></pre>
 <p>What we did there was to store the headers dictionary directly in the client object as <code>__headers</code>. Also, since we don't use the token for anything else, we are no longer storing the token at all. Also, the tests still pass, so it looks like we're still good.</p>
-<a class="header" href="print.html#refacotring-whats-next" id="refacotring-whats-next"><h2>Refacotring: What's Next?</h2></a>
+<a class="header" href="print.html#refactoring-whats-next" id="refactoring-whats-next"><h2>Refactoring: What's Next?</h2></a>
 <p>Can we go further? Sure, we can, but at this point, we probably shouldn't.</p>
 <p>So far, all verb implementations have involved making an API request, then processing the API response. We have implemented less than half of the verbs that we have to implement, though.</p>
 <p>That being the case, let's follow the advice that I'd imagine Sandy Metz would give right now: let's just keep working on the requirements until we're <strong><em>sure</em></strong> that we can safely refactor further.</p>
 <a class="header" href="print.html#putpatch-the-verb-legacy" id="putpatch-the-verb-legacy"><h1>PUT/PATCH: the Verb Legacy</h1></a>
-<p>While it's not strictly the case, <code>PUT</code> and <code>PATCH</code> are fairly often used interchangeably on REST APIs. Considering this, we're going to go ahead and implement these at the same time.</p>
+<p>While it's not strictly the case, <code>PUT</code> and <code>PATCH</code> are fairly often used interchangeably on REST APIs. In the previous section, we implemented the <code>POST</code> verb, which is typically used for creating a brand new entity on the remote service. In contrast, <code>PUT</code> and <code>PATCH</code> are most typically used to update an entity that already exists. Considering that they are often used synonymously, we're going to go ahead and implement these at the same time.</p>
 <a class="header" href="print.html#tests" id="tests"><h2>Tests</h2></a>
 <p>Another fortunate bit is that <code>put</code> and <code>patch</code> have the same signature as <code>post</code>. That being the case, let's go ahead and copypasta the <code>post</code> test in <code>maury/tests/test_client.py</code> and modify it for our new methods:</p>
 <pre><code class="language-python">    @requests_mock.Mocker()
@@ -1217,9 +1234,55 @@ class TestResult(TestCase):
         return self.__process_response(r)
 </code></pre>
 <p>With that, our tests pass, and we've now implemented 80% of the HTTP verbs that we need to meet our requirements. That means it's time to take another look and decide if we should refactor further.</p>
-<a class="header" href="print.html#refactoring-reqeust-handler" id="refactoring-reqeust-handler"><h2>Refactoring: Reqeust Handler</h2></a>
+<a class="header" href="print.html#refactoring-request-handler" id="refactoring-request-handler"><h2>Refactoring: Request Handler</h2></a>
 <p>It might seem obvious that since we've already made a common method to handle the processing of an API response that it would also make sense to break out a method that performs the requests in question.</p>
-<p>That is a fine observation, and it is indeed what I would usually do myself. The problem here is that my lack of Python knowledge is preventing me from coming up with the best way to do so. So, I'm going to keep on going the way that we have been and leave this refactoring to you, if you choose to do it.</p>
+<p>That is a fine observation, and it is indeed what I would usually do myself. I'm not going to do so here, but let's explore it a bit.</p>
+<p>In languages with which I have a higher degree of familiarity, I do HTTP requests the &quot;hard&quot; way. That is, so far, we've been doing things the easy way with methods like <code>request.get()</code>. What I'll usually do is to wrap the HTTP module's generic method is to send a request to the server, specifying the verb along the way. Then, my verb-related methods just dispatch to that wrapper.</p>
+<p>In Python, it would look something like this (docstrings shortened for brevity):</p>
+<pre><code class="language-python">    def __make_request(self, verb, path, params = None, data = None):
+        &quot;&quot;&quot;Send an HTTP request to the server.&quot;&quot;&quot;
+
+        # send the request to the server, return the processed response
+
+    def get(self, path, params = None):
+        &quot;&quot;&quot;Perform an HTTP GET on the API.&quot;&quot;&quot;
+
+        return self.__make_request('GET', path, params = params)
+
+    def post(self, path, params = None, data = None):
+        &quot;&quot;&quot;Perform an HTTP POST on the API.&quot;&quot;&quot;
+
+        return self.__make_request('POST', path, params = params, data = data)
+
+    def put(self, path, params = None, data = None):
+        &quot;&quot;&quot;Perform an HTTP PUT on the API.&quot;&quot;&quot;
+
+        return self.__make_request('PUT', path, params = params, data = data)
+
+    def patch(self, path, params = None, data = None):
+        &quot;&quot;&quot;Perform an HTTP PATCH on the API.&quot;&quot;&quot;
+
+        return self.__make_request('PATCH', path, params = params, data = data)
+</code></pre>
+<p>Granted, if we run our test suite right now, we get just a ton of errors, because we changed the verbs. The <code>requests</code> package, contrary to my initial thoughts, will allow us to do things the hard way pretty easily. So, let's fill in that <code>__make_request</code> method:</p>
+<pre><code class="language-python">    def __make_request(self, verb, path, params = None, data = None):
+        &quot;&quot;&quot;Send an HTTP request to the server.&quot;&quot;&quot;
+
+        response = requests.request(
+                # Uppercase the verb, just in case
+                verb.upper(),
+                self._construct_request_url(path),
+                params = params,
+                json = data,
+                headers = self.__headers,
+                allow_redirects = True
+                )
+
+        return self.__process_response(response)
+</code></pre>
+<p>Okay, that's actually not so bad. The only reason that it leaves a bad taste in my mouth at all is that finding <code>requests.request()</code> was a bit difficult. It <strong><em>is</em></strong> mentioned in the docs (under the Advanced Usage section), but that's not how I found it. I actually ended up digging through the <a href="https://github.com/requests/requests/blob/master/requests/api.py">source</a> until I figured out how <code>requests.get()</code> works, then working backwards.</p>
+<p>As it were, that's also where I got the <code>allow_redirects</code> argument. All of the verb-related methods in the <code>requests</code> package set this argument to <code>True</code> by default before dispatching to the <code>request()</code> method, so it seems a good idea for us to do so as well. Another fun tidbit: our driver's verb implementations now work almost identically to the way that the verbs in the <code>requests</code> package do.</p>
+<p>I rather like this design. Our public verb methods don't do any heavy lifting. Instead, they dispatch to private (not really, but by Python social convention) methods that do <em>all</em> of the heavy lifting.</p>
 <a class="header" href="print.html#delete-the-final-verb" id="delete-the-final-verb"><h1>DELETE: the Final Verb</h1></a>
 <p>Our driver is very nearly complete. We only have one verb left to go, so let's get to it!</p>
 <a class="header" href="print.html#test" id="test"><h2>Test</h2></a>
@@ -1279,13 +1342,166 @@ class TestResult(TestCase):
         params -- a dictionary of query params (default: None)
         &quot;&quot;&quot;
 
-        r = requests.delete(self.__construct_request_url(path),
-                params = params,
-                headers = self.__headers)
-
-        return self.__process_response(r)
+        return self.__make_request('DELETE', path, params = params)
 </code></pre>
 <p>There we have it. Now that all of the defined requirements are met and all of our tests pass, our client driver is technically complete.</p>
+<a class="header" href="print.html#the-completed-driver" id="the-completed-driver"><h2>The Completed Driver</h2></a>
+<p>For the sake of being able to see everything all at once, here is the full source for the complete driver:</p>
+<pre><code class="language-python">from furl import furl
+import requests
+from .result import Result
+
+class Client(object):
+    &quot;&quot;&quot;A base driver that talks to the Engine Yard API&quot;&quot;&quot;
+
+    def __init__(self, base_url = 'https://api.engineyard.com', token = None):
+        &quot;&quot;&quot;Instantiate a new Client instance
+        
+        Keyword arguments:
+        base_url -- the base URL of the API (default: 'https://api.engineyard.com')
+        token -- the API authentication token (default: None)
+        &quot;&quot;&quot;
+
+        self.__base_url = base_url
+        self.__headers = {
+                'X-EY-Token' : token,
+                'accept' : 'application/vnd.engineyard.com.v3+json',
+                'content-type' : 'application/json'
+                }
+
+    def __construct_request_url(self, path):
+        &quot;&quot;&quot;Construct a URL for an API endpoint.
+        
+        Given a relative endpoint path, construct a fully-qualified API URL.
+        &quot;&quot;&quot;
+
+        # Get a URL object that we can edit
+        u = furl(self.__base_url)
+
+        # Set the path to the endpoint in question
+        u.path = path
+
+        # Return the modified URL
+        return u.url
+
+    def __process_response(self, response):
+        &quot;&quot;&quot;Process an API response into a Result.&quot;&quot;&quot;
+
+        if response.ok:
+            return Result(response.json(), None)
+
+        return Result(
+                None,
+                &quot;The API returned the following status: %d&quot; % response.status_code
+                )
+
+    def __make_request(self, verb, path, params = None, data = None):
+        &quot;&quot;&quot;Send an HTTP request to the server.
+
+        Given an HTTP verb, an endpoint path, a dictionary of parameters,
+        and a dictionary of body data, send the request to the API and
+        return the result.
+
+        Positional arguments:
+        verb -- the HTTP verb to use for the request
+        path -- the path of the API endpoint you wish to address
+
+        Keyword arguments:
+        params -- a dictionary of query params (default: None)
+        data -- a dictionary of POST data (default: None)
+        &quot;&quot;&quot;
+
+        response = requests.request(
+                # Uppercase the verb, just in case
+                verb.upper(),
+                self.__construct_request_url(path),
+                params = params,
+                json = data,
+                headers = self.__headers,
+                allow_redirects = True
+                )
+
+        return self.__process_response(response)
+
+    def get(self, path, params = None):
+        &quot;&quot;&quot;Perform an HTTP GET on the API.
+        
+        Given an endpoint path and a dictionary of parameters, send the request
+        to the API and return the result.
+
+        Positional arguments:
+        path -- the path of the API endpoint you wish to GET
+
+        Keyword arguments:
+        params -- a dictionary of query params (default: None)
+        &quot;&quot;&quot;
+
+        return self.__make_request('GET', path, params = params)
+
+    def post(self, path, params = None, data = None):
+        &quot;&quot;&quot;Perform an HTTP POST on the API.
+        
+        Given an endpoint path, a dictionary of parameters, and a dictionary of
+        POST data, send the request to the API and return the result.
+
+        Positional arguments:
+        path -- the path of the API endpoint you wish to POST
+
+        Keyword arguments:
+        params -- a dictionary of query params (default: None)
+        data -- a dictionary of POST data (default: None)
+        &quot;&quot;&quot;
+
+        return self.__make_request('POST', path, params = params, data = data)
+
+    def put(self, path, params = None, data = None):
+        &quot;&quot;&quot;Perform an HTTP PUT on the API.
+        
+        Given an endpoint path, a dictionary of parameters, and a dictionary of
+        PUT data, send the request to the API and return the result.
+
+        Positional arguments:
+        path -- the path of the API endpoint you wish to PUT
+
+        Keyword arguments:
+        params -- a dictionary of query params (default: None)
+        data -- a dictionary of PUT data (default: None)
+        &quot;&quot;&quot;
+
+        return self.__make_request('PUT', path, params = params, data = data)
+
+    def patch(self, path, params = None, data = None):
+        &quot;&quot;&quot;Perform an HTTP PATCH on the API.
+        
+        Given an endpoint path, a dictionary of parameters, and a dictionary of
+        PATCH data, send the request to the API and return the result.
+
+        Positional arguments:
+        path -- the path of the API endpoint you wish to PATCH
+
+        Keyword arguments:
+        params -- a dictionary of query params (default: None)
+        data -- a dictionary of PATCH data (default: None)
+        &quot;&quot;&quot;
+
+        return self.__make_request('PATCH', path, params = params, data = data)
+
+    def delete(self, path, params = None):
+        &quot;&quot;&quot;Perform an HTTP DELETE on the API.
+        
+        Given an endpoint path and a dictionary of parameters, send the request
+        to the API and return the result.
+
+        Positional arguments:
+        path -- the path of the API endpoint you wish to DELETE
+
+        Keyword arguments:
+        params -- a dictionary of query params (default: None)
+        &quot;&quot;&quot;
+
+        return self.__make_request('DELETE', path, params = params)
+
+</code></pre>
 <a class="header" href="print.html#odds-and-ends" id="odds-and-ends"><h1>Odds and Ends</h1></a>
 <p>Keep in mind, I said that it's <em>technically</em> complete, in as much as it does everything that we need for it to do. That doesn't necessarily mean that we're done, though.</p>
 <p>How usable is the <code>maury</code> package right now? How many layers of documentation and submodules does one have to dig through to find out how to create a <code>Client</code>?</p>
@@ -1296,8 +1512,8 @@ class TestResult(TestCase):
 
 import maury
 
-class TestNewClient(TestCase):
-    def test_is_client(self):
+class TestMaury(TestCase):
+    def test_new_client(self):
         s = maury.new_client(token = 'token12345')
         self.assertIsInstance(s, maury.Client)
 </code></pre>
@@ -1318,6 +1534,14 @@ def new_client(base_url = 'https://api.engineyard.com', token = None):
 <p>Now we have a <em>somewhat friendly</em> and complete driver for the API that we're mapping. That's it for Phase 1, and now we're ready to move on to Phase 2.</p>
 <p>Feel free to take a break. Phase 2 is, if you can imagine it, a lot more reliant on code snippets than Phase 1 is, and it's also a rather tedious and repetitive affair.</p>
 <p>Also, just to be clear, you don't <strong><em>have</em></strong> to go any further than you already have. If you simply want to provide a lowish-level client that knows how to talk to the API that you're mapping so others can have a handy building block on which to build their API interactions, you're done. I like to go a little further than that, though, so I'll go ahead and trudge forward.</p>
+<a class="header" href="print.html#questions" id="questions"><h2>Questions</h2></a>
+<p>Remember that I said that I'd ask you questions on occasion? Here are a few that come to mind:</p>
+<ul>
+<li>If our driver works so much like the <code>requests</code> package, why not just use that package directly?</li>
+<li>Why do we keep refactoring such a small module?</li>
+<li>Off the top of your head, what would be different about this driver if we were mapping the <a href="https://www.twilio.com/docs/api/rest">Twilio API</a> rather than the Engine Yard API?</li>
+<li>How about the <a href="https://github.com/tootsuite/documentation/blob/master/Using-the-API/API.md">Mastodon API</a>?</li>
+</ul>
 <a class="header" href="print.html#handling-endpoints" id="handling-endpoints"><h1>Handling Endpoints</h1></a>
 <a class="header" href="print.html#users" id="users"><h1>Users</h1></a>
 <a class="header" href="print.html#accounts" id="accounts"><h1>Accounts</h1></a>

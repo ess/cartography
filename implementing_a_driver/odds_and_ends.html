@@ -130,8 +130,8 @@
 
 import maury
 
-class TestNewClient(TestCase):
-    def test_is_client(self):
+class TestMaury(TestCase):
+    def test_new_client(self):
         s = maury.new_client(token = 'token12345')
         self.assertIsInstance(s, maury.Client)
 </code></pre>
@@ -152,6 +152,14 @@ def new_client(base_url = 'https://api.engineyard.com', token = None):
 <p>Now we have a <em>somewhat friendly</em> and complete driver for the API that we're mapping. That's it for Phase 1, and now we're ready to move on to Phase 2.</p>
 <p>Feel free to take a break. Phase 2 is, if you can imagine it, a lot more reliant on code snippets than Phase 1 is, and it's also a rather tedious and repetitive affair.</p>
 <p>Also, just to be clear, you don't <strong><em>have</em></strong> to go any further than you already have. If you simply want to provide a lowish-level client that knows how to talk to the API that you're mapping so others can have a handy building block on which to build their API interactions, you're done. I like to go a little further than that, though, so I'll go ahead and trudge forward.</p>
+<a class="header" href="implementing_a_driver/odds_and_ends.html#questions" id="questions"><h2>Questions</h2></a>
+<p>Remember that I said that I'd ask you questions on occasion? Here are a few that come to mind:</p>
+<ul>
+<li>If our driver works so much like the <code>requests</code> package, why not just use that package directly?</li>
+<li>Why do we keep refactoring such a small module?</li>
+<li>Off the top of your head, what would be different about this driver if we were mapping the <a href="https://www.twilio.com/docs/api/rest">Twilio API</a> rather than the Engine Yard API?</li>
+<li>How about the <a href="https://github.com/tootsuite/documentation/blob/master/Using-the-API/API.md">Mastodon API</a>?</li>
+</ul>
 
                     </main>
 

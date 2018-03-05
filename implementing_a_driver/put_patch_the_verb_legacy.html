@@ -121,7 +121,7 @@
                 <div id="content" class="content">
                     <main>
                         <a class="header" href="implementing_a_driver/put_patch_the_verb_legacy.html#putpatch-the-verb-legacy" id="putpatch-the-verb-legacy"><h1>PUT/PATCH: the Verb Legacy</h1></a>
-<p>While it's not strictly the case, <code>PUT</code> and <code>PATCH</code> are fairly often used interchangeably on REST APIs. Considering this, we're going to go ahead and implement these at the same time.</p>
+<p>While it's not strictly the case, <code>PUT</code> and <code>PATCH</code> are fairly often used interchangeably on REST APIs. In the previous section, we implemented the <code>POST</code> verb, which is typically used for creating a brand new entity on the remote service. In contrast, <code>PUT</code> and <code>PATCH</code> are most typically used to update an entity that already exists. Considering that they are often used synonymously, we're going to go ahead and implement these at the same time.</p>
 <a class="header" href="implementing_a_driver/put_patch_the_verb_legacy.html#tests" id="tests"><h2>Tests</h2></a>
 <p>Another fortunate bit is that <code>put</code> and <code>patch</code> have the same signature as <code>post</code>. That being the case, let's go ahead and copypasta the <code>post</code> test in <code>maury/tests/test_client.py</code> and modify it for our new methods:</p>
 <pre><code class="language-python">    @requests_mock.Mocker()
@@ -248,9 +248,55 @@
         return self.__process_response(r)
 </code></pre>
 <p>With that, our tests pass, and we've now implemented 80% of the HTTP verbs that we need to meet our requirements. That means it's time to take another look and decide if we should refactor further.</p>
-<a class="header" href="implementing_a_driver/put_patch_the_verb_legacy.html#refactoring-reqeust-handler" id="refactoring-reqeust-handler"><h2>Refactoring: Reqeust Handler</h2></a>
+<a class="header" href="implementing_a_driver/put_patch_the_verb_legacy.html#refactoring-request-handler" id="refactoring-request-handler"><h2>Refactoring: Request Handler</h2></a>
 <p>It might seem obvious that since we've already made a common method to handle the processing of an API response that it would also make sense to break out a method that performs the requests in question.</p>
-<p>That is a fine observation, and it is indeed what I would usually do myself. The problem here is that my lack of Python knowledge is preventing me from coming up with the best way to do so. So, I'm going to keep on going the way that we have been and leave this refactoring to you, if you choose to do it.</p>
+<p>That is a fine observation, and it is indeed what I would usually do myself. I'm not going to do so here, but let's explore it a bit.</p>
+<p>In languages with which I have a higher degree of familiarity, I do HTTP requests the &quot;hard&quot; way. That is, so far, we've been doing things the easy way with methods like <code>request.get()</code>. What I'll usually do is to wrap the HTTP module's generic method is to send a request to the server, specifying the verb along the way. Then, my verb-related methods just dispatch to that wrapper.</p>
+<p>In Python, it would look something like this (docstrings shortened for brevity):</p>
+<pre><code class="language-python">    def __make_request(self, verb, path, params = None, data = None):
+        &quot;&quot;&quot;Send an HTTP request to the server.&quot;&quot;&quot;
+
+        # send the request to the server, return the processed response
+
+    def get(self, path, params = None):
+        &quot;&quot;&quot;Perform an HTTP GET on the API.&quot;&quot;&quot;
+
+        return self.__make_request('GET', path, params = params)
+
+    def post(self, path, params = None, data = None):
+        &quot;&quot;&quot;Perform an HTTP POST on the API.&quot;&quot;&quot;
+
+        return self.__make_request('POST', path, params = params, data = data)
+
+    def put(self, path, params = None, data = None):
+        &quot;&quot;&quot;Perform an HTTP PUT on the API.&quot;&quot;&quot;
+
+        return self.__make_request('PUT', path, params = params, data = data)
+
+    def patch(self, path, params = None, data = None):
+        &quot;&quot;&quot;Perform an HTTP PATCH on the API.&quot;&quot;&quot;
+
+        return self.__make_request('PATCH', path, params = params, data = data)
+</code></pre>
+<p>Granted, if we run our test suite right now, we get just a ton of errors, because we changed the verbs. The <code>requests</code> package, contrary to my initial thoughts, will allow us to do things the hard way pretty easily. So, let's fill in that <code>__make_request</code> method:</p>
+<pre><code class="language-python">    def __make_request(self, verb, path, params = None, data = None):
+        &quot;&quot;&quot;Send an HTTP request to the server.&quot;&quot;&quot;
+
+        response = requests.request(
+                # Uppercase the verb, just in case
+                verb.upper(),
+                self._construct_request_url(path),
+                params = params,
+                json = data,
+                headers = self.__headers,
+                allow_redirects = True
+                )
+
+        return self.__process_response(response)
+</code></pre>
+<p>Okay, that's actually not so bad. The only reason that it leaves a bad taste in my mouth at all is that finding <code>requests.request()</code> was a bit difficult. It <strong><em>is</em></strong> mentioned in the docs (under the Advanced Usage section), but that's not how I found it. I actually ended up digging through the <a href="https://github.com/requests/requests/blob/master/requests/api.py">source</a> until I figured out how <code>requests.get()</code> works, then working backwards.</p>
+<p>As it were, that's also where I got the <code>allow_redirects</code> argument. All of the verb-related methods in the <code>requests</code> package set this argument to <code>True</code> by default before dispatching to the <code>request()</code> method, so it seems a good idea for us to do so as well. Another fun tidbit: our driver's verb implementations now work almost identically to the way that the verbs in the <code>requests</code> package do.</p>
+<p>I rather like this design. Our public verb methods don't do any heavy lifting. Instead, they dispatch to private (not really, but by Python social convention) methods that do <em>all</em> of the heavy lifting.</p>
 
                     </main>
 

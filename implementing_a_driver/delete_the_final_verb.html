@@ -179,13 +179,166 @@
         params -- a dictionary of query params (default: None)
         &quot;&quot;&quot;
 
-        r = requests.delete(self.__construct_request_url(path),
-                params = params,
-                headers = self.__headers)
-
-        return self.__process_response(r)
+        return self.__make_request('DELETE', path, params = params)
 </code></pre>
 <p>There we have it. Now that all of the defined requirements are met and all of our tests pass, our client driver is technically complete.</p>
+<a class="header" href="implementing_a_driver/delete_the_final_verb.html#the-completed-driver" id="the-completed-driver"><h2>The Completed Driver</h2></a>
+<p>For the sake of being able to see everything all at once, here is the full source for the complete driver:</p>
+<pre><code class="language-python">from furl import furl
+import requests
+from .result import Result
+
+class Client(object):
+    &quot;&quot;&quot;A base driver that talks to the Engine Yard API&quot;&quot;&quot;
+
+    def __init__(self, base_url = 'https://api.engineyard.com', token = None):
+        &quot;&quot;&quot;Instantiate a new Client instance
+        
+        Keyword arguments:
+        base_url -- the base URL of the API (default: 'https://api.engineyard.com')
+        token -- the API authentication token (default: None)
+        &quot;&quot;&quot;
+
+        self.__base_url = base_url
+        self.__headers = {
+                'X-EY-Token' : token,
+                'accept' : 'application/vnd.engineyard.com.v3+json',
+                'content-type' : 'application/json'
+                }
+
+    def __construct_request_url(self, path):
+        &quot;&quot;&quot;Construct a URL for an API endpoint.
+        
+        Given a relative endpoint path, construct a fully-qualified API URL.
+        &quot;&quot;&quot;
+
+        # Get a URL object that we can edit
+        u = furl(self.__base_url)
+
+        # Set the path to the endpoint in question
+        u.path = path
+
+        # Return the modified URL
+        return u.url
+
+    def __process_response(self, response):
+        &quot;&quot;&quot;Process an API response into a Result.&quot;&quot;&quot;
+
+        if response.ok:
+            return Result(response.json(), None)
+
+        return Result(
+                None,
+                &quot;The API returned the following status: %d&quot; % response.status_code
+                )
+
+    def __make_request(self, verb, path, params = None, data = None):
+        &quot;&quot;&quot;Send an HTTP request to the server.
+
+        Given an HTTP verb, an endpoint path, a dictionary of parameters,
+        and a dictionary of body data, send the request to the API and
+        return the result.
+
+        Positional arguments:
+        verb -- the HTTP verb to use for the request
+        path -- the path of the API endpoint you wish to address
+
+        Keyword arguments:
+        params -- a dictionary of query params (default: None)
+        data -- a dictionary of POST data (default: None)
+        &quot;&quot;&quot;
+
+        response = requests.request(
+                # Uppercase the verb, just in case
+                verb.upper(),
+                self.__construct_request_url(path),
+                params = params,
+                json = data,
+                headers = self.__headers,
+                allow_redirects = True
+                )
+
+        return self.__process_response(response)
+
+    def get(self, path, params = None):
+        &quot;&quot;&quot;Perform an HTTP GET on the API.
+        
+        Given an endpoint path and a dictionary of parameters, send the request
+        to the API and return the result.
+
+        Positional arguments:
+        path -- the path of the API endpoint you wish to GET
+
+        Keyword arguments:
+        params -- a dictionary of query params (default: None)
+        &quot;&quot;&quot;
+
+        return self.__make_request('GET', path, params = params)
+
+    def post(self, path, params = None, data = None):
+        &quot;&quot;&quot;Perform an HTTP POST on the API.
+        
+        Given an endpoint path, a dictionary of parameters, and a dictionary of
+        POST data, send the request to the API and return the result.
+
+        Positional arguments:
+        path -- the path of the API endpoint you wish to POST
+
+        Keyword arguments:
+        params -- a dictionary of query params (default: None)
+        data -- a dictionary of POST data (default: None)
+        &quot;&quot;&quot;
+
+        return self.__make_request('POST', path, params = params, data = data)
+
+    def put(self, path, params = None, data = None):
+        &quot;&quot;&quot;Perform an HTTP PUT on the API.
+        
+        Given an endpoint path, a dictionary of parameters, and a dictionary of
+        PUT data, send the request to the API and return the result.
+
+        Positional arguments:
+        path -- the path of the API endpoint you wish to PUT
+
+        Keyword arguments:
+        params -- a dictionary of query params (default: None)
+        data -- a dictionary of PUT data (default: None)
+        &quot;&quot;&quot;
+
+        return self.__make_request('PUT', path, params = params, data = data)
+
+    def patch(self, path, params = None, data = None):
+        &quot;&quot;&quot;Perform an HTTP PATCH on the API.
+        
+        Given an endpoint path, a dictionary of parameters, and a dictionary of
+        PATCH data, send the request to the API and return the result.
+
+        Positional arguments:
+        path -- the path of the API endpoint you wish to PATCH
+
+        Keyword arguments:
+        params -- a dictionary of query params (default: None)
+        data -- a dictionary of PATCH data (default: None)
+        &quot;&quot;&quot;
+
+        return self.__make_request('PATCH', path, params = params, data = data)
+
+    def delete(self, path, params = None):
+        &quot;&quot;&quot;Perform an HTTP DELETE on the API.
+        
+        Given an endpoint path and a dictionary of parameters, send the request
+        to the API and return the result.
+
+        Positional arguments:
+        path -- the path of the API endpoint you wish to DELETE
+
+        Keyword arguments:
+        params -- a dictionary of query params (default: None)
+        &quot;&quot;&quot;
+
+        return self.__make_request('DELETE', path, params = params)
+
+</code></pre>
 
                     </main>
 
