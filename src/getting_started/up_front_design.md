@@ -16,7 +16,7 @@ There are a few schools of thought as to what an API client should look like. At
 
 I prefer something that's a bit between the two.
 
-For most every API client that I've written, I've gone with a design that looks a lot like the Data Mapper pattern overlaid on top of a Repsitory. I'm not incredibly familiar with libraries that work this way outside of the Ruby community, but from that community, the best examples are probably [Ruby Object Mapper](http://rom-rb.org/) and [Hanami Model](https://github.com/hanami/model).
+For nearly every API client that I've written, I've gone with a design that looks a lot like the Data Mapper pattern overlaid on top of a Repository. I'm not incredibly familiar with libraries that work this way outside of the Ruby community. From that community, though, the best examples are probably [Ruby Object Mapper](http://rom-rb.org/) and [Hanami Model](https://github.com/hanami/model).
 
 What we're going to do is to break this API client project into two main phases:
 

@@ -1,6 +1,6 @@
 # External Dependencies #
 
-It might seem a bit like putting the cart before the horse, but being totally unfamiliar with Python and its support for the things that we already know our client needs to do, it seems like a good idea to go ahead and research how to do those things.
+It might seem a bit like putting the cart before the horse, but I'm not very familiar with Python at this point. It makes sense to do a bit of research to find out if it has support for the things that we already know our client needs to do.
 
 Technically, all of the things that we need in order to implement the core driver is provided in the Python standard library. After a bit of comparitive research, though, it seems that the non-standard options provided by the community might well be easier to use (and are often suggested over the standard library).
 

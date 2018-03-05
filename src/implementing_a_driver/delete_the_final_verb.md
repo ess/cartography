@@ -17,7 +17,16 @@ Okay, we have a failing test now, so we're going to do the obvious.
 Since the signature is the same as `get`, we're going to copypasta the `get` method definition and modify it to fit our new `delete` method in `maury/client.py`:
 
 ```python
-{{#include maury/client.py:131:148}}
+{{#include maury/client-final.py:140:153}}
 ```
 
 There we have it. Now that all of the defined requirements are met and all of our tests pass, our client driver is technically complete.
+
+## The Completed Driver ##
+
+For the sake of being able to see everything all at once, here is the full source for the complete driver:
+
+
+```python
+{{#include maury/client-final.py}}
+```

@@ -15,8 +15,8 @@ from unittest import TestCase
 
 import maury
 
-class TestNewClient(TestCase):
-    def test_is_client(self):
+class TestMaury(TestCase):
+    def test_new_client(self):
         s = maury.new_client(token = 'token12345')
         self.assertIsInstance(s, maury.Client)
 ```
@@ -44,3 +44,12 @@ Now we have a *somewhat friendly* and complete driver for the API that we're map
 Feel free to take a break. Phase 2 is, if you can imagine it, a lot more reliant on code snippets than Phase 1 is, and it's also a rather tedious and repetitive affair.
 
 Also, just to be clear, you don't ***have*** to go any further than you already have. If you simply want to provide a lowish-level client that knows how to talk to the API that you're mapping so others can have a handy building block on which to build their API interactions, you're done. I like to go a little further than that, though, so I'll go ahead and trudge forward.
+
+## Questions ##
+
+Remember that I said that I'd ask you questions on occasion? Here are a few that come to mind:
+
+* If our driver works so much like the `requests` package, why not just use that package directly?
+* Why do we keep refactoring such a small module?
+* Off the top of your head, what would be different about this driver if we were mapping the [Twilio API](https://www.twilio.com/docs/api/rest) rather than the Engine Yard API?
+* How about the [Mastodon API](https://github.com/tootsuite/documentation/blob/master/Using-the-API/API.md)?

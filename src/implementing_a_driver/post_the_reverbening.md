@@ -16,7 +16,7 @@ Now that we're a little more familiar with the language and its unittest framewo
 {{#include maury/test_client-final.py:46:83}}
 ```
 
-As you can see, our `post` test is almost identical to our `get` test. That's becuase, as mentioned above, all of the verbs are handled in more or less the same way. The big difference here is that `post` involves not just a path and a params dict, but also a dict of data to be `POST`ed to the endpoint.
+As you can see, our `post` test is almost identical to our `get` test. That's because, as mentioned above, all of the verbs are handled in more or less the same way. The big difference here is that `post` involves not just a path and a params dict, but also a dict of data to be `POST`ed to the endpoint.
 
 After running our tests, we see that our `test_post` test yields an error. That's because we don't have a `post` method in our client yet. Let's do that.
 
@@ -35,6 +35,27 @@ test_post (maury.tests.test_client.TestResult) ... ok
 ```
 
 So, one could argue that we're done at this point, but there's something that's bugging me a bit about this implementation. Take a look at the `get` and `post` methods. Notice how similar they are? We should probably take this opportunity to go ahead and refactor those similarities away.
+
+## Refactoring? ##
+
+For those not used to the term or the practice, refactoring is basically the act of rearranging the code within a program to increase the simplicity of the system without altering its behavior. That's not really the proper definition of the term, but that is the way that I think about it.
+
+There are a several interpretations one could use for "simplicity" in this context. I think about two things:
+
+* How easy is it to figure out how the module works?
+* How *smelly* is the code?
+
+Our client module is fairly small, and it's not very difficult to figure out how it works for the moment. However, it ***is*** slightly smelly due to the high degree of code duplication between the `get` and `post` methods. In addition to this, each of those high-duplication methods also have variant execution paths depending on the API response.
+
+We can't totally remove the duplicated code and those variant conditional execution paths, but we ***can*** minimize those smells by method extraction.
+
+Before we start, let's set some ground rules that we will use every time we refactor anything going forward:
+
+* We ***MAY*** change the module that we're refactoring
+* We ***MAY*** create new methods within the module
+* We ***MAY*** create new modules and hand work off to them
+* We ***MAY NOT*** alter our tests (otherwise, we're redesinging, not refactoring)
+* We ***MUST*** have a passing test suite after every change (otherwise, we have broken our module)
 
 ## Refactoring: Response Processor ##
 
@@ -56,7 +77,7 @@ Now, there are a lot of ways that we could switch up the request headers diction
 
 What we did there was to store the headers dictionary directly in the client object as `__headers`. Also, since we don't use the token for anything else, we are no longer storing the token at all. Also, the tests still pass, so it looks like we're still good.
 
-## Refacotring: What's Next? ##
+## Refactoring: What's Next? ##
 
 Can we go further? Sure, we can, but at this point, we probably shouldn't.
 
