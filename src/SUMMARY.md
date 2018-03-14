@@ -13,6 +13,15 @@
     - [Odds and Ends](implementing_a_driver/odds_and_ends.md)
 
 - [Handling Endpoints](handling_endpoints/overview.md)
-    - [Users](handling_endpoints/users.md)
-    - [Accounts](handling_endpoints/accounts.md)
-    - [Environments](handling_endpoints/environments.md)
+    - [Gathering Information](handling_endpoints/gathering_information.md)
+    - [(WIP) Up-front Design](handling_endpoints/up_front_design.md)
+
+- [(WIP) Accounts](accounts/overview.md)
+    - [Entity](accounts/entity.md)
+    - [List Accounts](accounts/all.md)
+    - [List Accounts For A User](accounts/for_user.md)
+    - [Show An Account](accounts/get.md)
+    - [Update An Account](accounts/update.md)
+
+- [Users](users/overview.md)
+- [Environments](environments/overview.md)
