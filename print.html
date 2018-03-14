@@ -74,7 +74,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li class="affix"><a href="preface/overview.html">Howdy</a></li><li><a href="getting_started/overview.html"><strong aria-hidden="true">1.</strong> Getting Started</a></li><li><ol class="section"><li><a href="getting_started/gathering_information.html"><strong aria-hidden="true">1.1.</strong> Gathering Information</a></li><li><a href="getting_started/up_front_design.html"><strong aria-hidden="true">1.2.</strong> Up-front Design</a></li><li><a href="getting_started/external_dependencies.html"><strong aria-hidden="true">1.3.</strong> External Dependencies</a></li></ol></li><li><a href="implementing_a_driver/overview.html"><strong aria-hidden="true">2.</strong> Implementing A Driver</a></li><li><ol class="section"><li><a href="implementing_a_driver/get_the_first_verb.html"><strong aria-hidden="true">2.1.</strong> GET: the First Verb</a></li><li><a href="implementing_a_driver/post_the_reverbening.html"><strong aria-hidden="true">2.2.</strong> POST: the Reverbening</a></li><li><a href="implementing_a_driver/put_patch_the_verb_legacy.html"><strong aria-hidden="true">2.3.</strong> PUT/PATCH: the Verb Legacy</a></li><li><a href="implementing_a_driver/delete_the_final_verb.html"><strong aria-hidden="true">2.4.</strong> DELETE: the Final Verb</a></li><li><a href="implementing_a_driver/odds_and_ends.html"><strong aria-hidden="true">2.5.</strong> Odds and Ends</a></li></ol></li><li><a href="handling_endpoints/overview.html"><strong aria-hidden="true">3.</strong> Handling Endpoints</a></li><li><ol class="section"><li><a href="handling_endpoints/users.html"><strong aria-hidden="true">3.1.</strong> Users</a></li><li><a href="handling_endpoints/accounts.html"><strong aria-hidden="true">3.2.</strong> Accounts</a></li><li><a href="handling_endpoints/environments.html"><strong aria-hidden="true">3.3.</strong> Environments</a></li></ol></li></ol>
+            <ol class="chapter"><li class="affix"><a href="preface/overview.html">Howdy</a></li><li><a href="getting_started/overview.html"><strong aria-hidden="true">1.</strong> Getting Started</a></li><li><ol class="section"><li><a href="getting_started/gathering_information.html"><strong aria-hidden="true">1.1.</strong> Gathering Information</a></li><li><a href="getting_started/up_front_design.html"><strong aria-hidden="true">1.2.</strong> Up-front Design</a></li><li><a href="getting_started/external_dependencies.html"><strong aria-hidden="true">1.3.</strong> External Dependencies</a></li></ol></li><li><a href="implementing_a_driver/overview.html"><strong aria-hidden="true">2.</strong> Implementing A Driver</a></li><li><ol class="section"><li><a href="implementing_a_driver/get_the_first_verb.html"><strong aria-hidden="true">2.1.</strong> GET: the First Verb</a></li><li><a href="implementing_a_driver/post_the_reverbening.html"><strong aria-hidden="true">2.2.</strong> POST: the Reverbening</a></li><li><a href="implementing_a_driver/put_patch_the_verb_legacy.html"><strong aria-hidden="true">2.3.</strong> PUT/PATCH: the Verb Legacy</a></li><li><a href="implementing_a_driver/delete_the_final_verb.html"><strong aria-hidden="true">2.4.</strong> DELETE: the Final Verb</a></li><li><a href="implementing_a_driver/odds_and_ends.html"><strong aria-hidden="true">2.5.</strong> Odds and Ends</a></li></ol></li><li><a href="handling_endpoints/overview.html"><strong aria-hidden="true">3.</strong> Handling Endpoints</a></li><li><ol class="section"><li><a href="handling_endpoints/gathering_information.html"><strong aria-hidden="true">3.1.</strong> Gathering Information</a></li><li><a href="handling_endpoints/up_front_design.html"><strong aria-hidden="true">3.2.</strong> (WIP) Up-front Design</a></li></ol></li><li><a href="accounts/overview.html"><strong aria-hidden="true">4.</strong> (WIP) Accounts</a></li><li><ol class="section"><li><a href="accounts/entity.html"><strong aria-hidden="true">4.1.</strong> Entity</a></li><li><a href="accounts/all.html"><strong aria-hidden="true">4.2.</strong> List Accounts</a></li><li><a href="accounts/for_user.html"><strong aria-hidden="true">4.3.</strong> List Accounts For A User</a></li><li><a href="accounts/get.html"><strong aria-hidden="true">4.4.</strong> Show An Account</a></li><li><a href="accounts/update.html"><strong aria-hidden="true">4.5.</strong> Update An Account</a></li></ol></li><li><a href="users/overview.html"><strong aria-hidden="true">5.</strong> Users</a></li><li><a href="environments/overview.html"><strong aria-hidden="true">6.</strong> Environments</a></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -1543,8 +1543,256 @@ def new_client(base_url = 'https://api.engineyard.com', token = None):
 <li>How about the <a href="https://github.com/tootsuite/documentation/blob/master/Using-the-API/API.md">Mastodon API</a>?</li>
 </ul>
 <a class="header" href="print.html#handling-endpoints" id="handling-endpoints"><h1>Handling Endpoints</h1></a>
-<a class="header" href="print.html#users" id="users"><h1>Users</h1></a>
+<p>Welcome to Phase 2! From here on out, we'll be building out the implementations for the various endpoints that are available, as per the <a href="https://developer.engineyard.com">API docs</a>.</p>
+<p>First, though, we need to do a bit of thinking about how these implementations will look. Also, for reasons that will become obvious fairly quickly, we need to make a decision about mocking.</p>
+<p>So, let's dig into overall endpoint design.</p>
+<a class="header" href="print.html#gathering-information-1" id="gathering-information-1"><h1>Gathering Information</h1></a>
+<p>When we did the initial documentation investigation to develop our driver, we gave just a very quick glance at the documentation for the individual endpoints. Now we're going to dig in a bit further to find traits that are common to all of those endpoints.</p>
+<p>Looking only at the lists at the beginning of each endpoint page, we can get the following information:</p>
+<ul>
+<li>With few exceptions, all endpoints have a way to get a list of entities</li>
+<li>With few exceptions, all endpoints have a way to get a single entity</li>
+<li>Only a few of the endpoints have meaningful write operations</li>
+<li>A few endpoints have RPC-like operations that can be performed</li>
+<li>Most endpoints can be used as a sub-endpoint of another endpoint (ie &quot;get all accounts for a user&quot;)</li>
+</ul>
+<p>Looking a bit further on each of these pages, we can glean even more information about those above concepts:</p>
+<ul>
+<li>When listing entities from an endpoint, the returned object is a root node with a list, and the name of that node is the entity type of items in the list</li>
+<li>When getting a single entity from an endpoint, the returned object is a root node with an embedded object, and the name of that node is the entity type of that embedded object</li>
+<li>When querying for either multiple entities or a single entity, most endpoints support passing in a list of query params to filter the result</li>
+</ul>
+<a class="header" href="print.html#up-front-design-1" id="up-front-design-1"><h1>Up-front Design</h1></a>
+<p>As they all have slightly different requiremnts, it's a little more difficult to do much design for these endpoints as a whole. Still, we can lay out some basic design elements for all of them:</p>
+<ul>
+<li>An endpoint is wholly contained within a maury submodule</li>
+<li>An endpoint contains an Entity class</li>
+<li>An endpoint contains one or more module-level functions</li>
+<li>These module-level functions all take a <code>Client</code> instance as their first argument</li>
+</ul>
+<p>Let's break that down a bit further.</p>
+<a class="header" href="print.html#why-submodules" id="why-submodules"><h2>Why Submodules?</h2></a>
+<p>Every formal computer science class that I've taken has emphasized the importance of modular code. The reasoning that's always used is that modular code is code that is easy to re-use. I'm not going to deny that, but I honestly think there's a more important quality to modular code:</p>
+<p>A highly modular system contains many clear seams.</p>
+<p>What do I mean by &quot;seam?&quot; Much like the seams in your clothing that join two pieces of fabric, a seam in a software system is the methods, references, and so on that allow two pieces of the system to work together. There are a few reasons that seams are handy, but here are the ones that I care about the most, and they're related to each other:</p>
+<ul>
+<li>A seam is a clear, concrete separation of concerns</li>
+<li>A seam gives us a concrete border along which we can mock the code that is not directly under test</li>
+</ul>
+<a class="header" href="print.html#separation-of-concerns" id="separation-of-concerns"><h3>Separation of Concerns</h3></a>
+<p>In object-oriented design, particularly in terms of [SOLID](https://en.wikipedia.org/wiki/SOLID_(object-oriented_design), one of the big goals is to limit the number of responsibilities given to a single object. Heck, the Single Responsibility Principle is the &quot;S&quot; in SOLID.</p>
+<p>That's fine and good for individual classes, but I like to apply SRP as much as is possible to the module that contains those classes. For example, you'll see in the following chapters that the &quot;accounts&quot; module only does account stuff, the &quot;environments&quot; module only does environment stuff, so on.</p>
+<a class="header" href="print.html#mocking-along-seams" id="mocking-along-seams"><h3>Mocking Along Seams</h3></a>
+<p>Sometimes, it's incredibly inconvenient to actually run all of the code that's invovled with generating a result in our tests. For example, in our driver implementation, you saw that we used <code>requests-mock</code> to fake out the raw HTTP calls that were made.</p>
+<p>Generally speaking, there are two big important rules for mocking:</p>
+<ul>
+<li>You cannot mock the code under test</li>
+<li>You can only mock documented interfaces for which you can reasonably replicate behavior</li>
+</ul>
+<p>This is usually rolled up neatly as &quot;mock along the seam.&quot; In the case of our driver, we don't &quot;own&quot; the upstream API, so that is a natural seam. That being the case, we mocked specific known behaviors of the upstream API.</p>
+<p>Generally speaking, it's perfectly fine to mock code along any seam in your system. We'll get deeper into this in the following chapters, and it's a technique that I very much hope carries over into all of your projects if you don't already work this way.</p>
+<a class="header" href="print.html#entities" id="entities"><h2>Entities</h2></a>
+<p>In both the Data Mapper and the Repository patterns, the actual data object that is returned from the data store is typically referred to as an &quot;entity.&quot; In the case of Repository, it's usually something like a Python dictionary, and in the case of Data Mapper, it's typically an object with reader methods for the properties of the object.</p>
+<p>Take a look back at the Engine Yard API documentation: more or less every request returns a JSON object that describes one or more instance of the requested resource. Those are entities in the broad sense.</p>
+<p>I mentioned that the API client design that I like is somewhat like the Data Mapper pattern overlayed on top of the Repository pattern. That being the case, here's the general design that we'll use for all Entity classes:</p>
+<ul>
+<li>An Entity has a reader for each important property</li>
+<li>An Entity has a general reader that can access any property</li>
+<li>An Entity should be immutable</li>
+</ul>
 <a class="header" href="print.html#accounts" id="accounts"><h1>Accounts</h1></a>
+<p>According to the <a href="https://developer.engineyard.com/accounts">Accounts documentation</a>, there are four basic uses for the endpoint:</p>
+<ul>
+<li>List all accounts (GET a collection of accounts visible to the current user)</li>
+<li>List all all accounts for a given user (GET a collection of accounts that are visible to the current user and associated with the given user)</li>
+<li>Show an account (GET a single account)</li>
+<li>Update an account's emergency contact (PUT new data for the account)</li>
+</ul>
+<p>Two of these are problematic right off the top. For one, it appears that the docs don't actually tell us anything about the Users endpoint. Also, while the last use is described only in terms of updating the emergency contact, the parameter list for the use case implies that we can also update the account name.</p>
+<p>Before we actually implement any of those, though, let's go ahead and define the Entity for this module ...</p>
+<a class="header" href="print.html#entity" id="entity"><h1>Entity</h1></a>
+<p>This is the first entity that we're defining, so it's going to be a bit more work than the entities for pretty much all other endpoints. Let's review the general requirements for an Entity:</p>
+<ul>
+<li>It must have a general reader for any property</li>
+<li>It must have a specific reader for all important properties</li>
+<li>It should be immutable</li>
+</ul>
+<p>Why would we want the Entity to be immutable (or as close as we can get to it in Python)? In the end, I can bring up several arguments both for and against the notion of immutable data. The reality here is that after working for a long time with both sorts of systems, I've had a much better experience with those that treat data as data.</p>
+<p>I don't have a lot of incredibly strong opinions about developering in general, but the idea that data should be data and nothing more is definitely a member of that club.</p>
+<a class="header" href="print.html#general-reader" id="general-reader"><h2>General Reader</h2></a>
+<p>So, we want to be able to read any given property (by key) from the entity. Let's start with a test and work backwards from there. Since we're effectively just fetching a value from a dictionary, let's call the method <code>fetch</code> and add our test to <code>maury/tests/test_accounts.py</code>:</p>
+<pre><code class="language-python">from unittest import TestCase
+
+import maury.accounts as accounts
+
+class TestAccounts(TestCase):
+    def test_entity_fetch(self):
+        data = {
+                'id' : 'someaccount'
+                }
+
+        e = accounts.Entity(data = data)
+
+        # When the property is known, we return the associated value
+        self.assertEqual(e.fetch('id'), data['id'])
+
+        # When the property is unknown, we return None
+        self.assertEqual(e.fetch('unknown_key'), None)
+</code></pre>
+<p>That seems to cover the basic rules around <code>fetch</code>: if the key is in the Entity's data dictionary, we return the value for that key. Otherwise, we return <code>None</code>. Granted, if we run that test, we get an error about the class not existing. Let's fix that in <code>maury/accounts.py</code>:</p>
+<pre><code class="language-python">class Entity(object):
+    &quot;&quot;&quot;A data structure model for an Account&quot;&quot;&quot;
+
+    pass
+</code></pre>
+<p>That's enough to run our tests and ... get a different error. Such is the nature of the test-driven development beast. Now it's complaining that we can't actually instantiate an Entity the way that we're trying to, so let's fix that:</p>
+<pre><code class="language-python">class Entity(object):
+    &quot;&quot;&quot;A data structure model for an Account&quot;&quot;&quot;
+
+    def __init__(self, data = {}):
+        &quot;&quot;&quot;Instantiate an Entity with some data&quot;&quot;&quot;
+
+        self.__data = data
+
+        # Ensure that __data is a dict
+        if type(self.__data) is not dict:
+            self.__data = {}
+</code></pre>
+<p>We're getting closer. Now we get yet another error, and it's because we haven't a <code>fetch</code> method for our Entity objects. Back to <code>maury/accounts.py</code>:</p>
+<pre><code class="language-python">class Entity(object):
+    &quot;&quot;&quot;A data structure model for an Account&quot;&quot;&quot;
+
+    def __init__(self, data = {}):
+        &quot;&quot;&quot;Instantiate an Entity with some data&quot;&quot;&quot;
+
+        self.__data = data
+
+        # Ensure that __data is a dict
+        if type(self.__data) is not dict:
+            self.__data = {}
+
+    def fetch(self, key):
+        &quot;&quot;&quot;Get a data property from the Entity
+        
+        Positional Arguments:
+        key -- the name of the data property we wish to access
+        &quot;&quot;&quot;
+
+        pass
+</code></pre>
+<p>Now we're getting somewhere. We're no longer getting Python errors when we run our accounts test ... now we're getting an actual test failure:</p>
+<pre><code>FAIL: test_entity_fetch (maury.tests.test_accounts.TestAccounts)
+</code></pre>
+<p>Looking a bit further, we see that our primary assertion is not being provided by our <code>fetch</code> implementation. That is, right now, <code>fetch</code> literally doesn't return anything (it returns the default Python return, <code>None</code>). So, let's make it return the expected information:</p>
+<pre><code class="language-python">    def fetch(self, key):
+        &quot;&quot;&quot;Get a data property from the Entity
+        
+        Positional Arguments:
+        key -- the name of the data property we wish to access
+        &quot;&quot;&quot;
+
+        return self.__data[key]
+</code></pre>
+<p>Alright, our first assertion passes ... which leads us to another Python error in our tests:</p>
+<pre><code>KeyError: unknown key
+</code></pre>
+<p>That indicates that our second scenario is failing (though we could arguably be testing that in a way to produce a failure rather than an error). So, what we want is for <code>fetch</code> to return the actual requested data if the key is known, but to return a default <code>None</code> value if the key is not known. Since it's guaranteed that an Entity's internal <code>__data</code> is a <code>dict</code>, we can use a handy method for that:</p>
+<pre><code class="language-python">    def fetch(self, key):
+        &quot;&quot;&quot;Get a data property from the Entity
+        
+        Positional Arguments:
+        key -- the name of the data property we wish to access
+        &quot;&quot;&quot;
+
+        return self.__data.get(key, None)
+</code></pre>
+<p>Our tests are now passing, and that's awesome. We've implemented a general reader for any data property of an account entity.</p>
+<a class="header" href="print.html#specific-readers" id="specific-readers"><h2>Specific Readers</h2></a>
+<p>We also require that the Entity have a specific reader for all &quot;important&quot; data properties to make things easier for the end-users of our client. We're nice folks like that. So, let's head back over to the <a href="https://developer.engineyard.com/accounts">Accounts docs</a> and figure out what some of the important properties are.</p>
+<p>At least for now, I've narrowed it down to basically the following:</p>
+<ul>
+<li>id -- the identifier used on the API to reference the account</li>
+<li>name -- the name used on the API to reference the account</li>
+<li>emergency_contact -- the emergency contact for the account</li>
+</ul>
+<a class="header" href="print.html#account-id" id="account-id"><h3>Account ID</h3></a>
+<p>Let's start by adding a test to <code>maury/tests/test_accounts.py</code>:</p>
+<pre><code class="language-python">    def test_entity_id(self):
+        data = {
+                'id' : 'someaccount'
+                }
+
+        good = accounts.Entity(data = data)
+        bad = accounts.Entity(data = {})
+
+        # An entity with an id returns that id
+        self.assertEqual(good.id, data['id'])
+
+        # An entity without an id returns None
+        self.assertEqual(bad.id, None)
+</code></pre>
+<p>This test is actually quite a lot like our <code>fetch</code> test, as do the initial results. That being the case, let's go ahead and implement the <code>id</code> method by using the <code>fetch</code> method:</p>
+<pre><code class="language-python">    @property
+    def id(self):
+        &quot;&quot;&quot;Get the account's ID&quot;&quot;&quot;
+
+        return self.fetch('id')
+</code></pre>
+<p>Boom. Our tests pass, and we can move on to the next reader.</p>
+<a class="header" href="print.html#name-and-emergency-contact" id="name-and-emergency-contact"><h3>Name and Emergency Contact</h3></a>
+<p>The other two specific readers are just riffs on the <code>id</code> reader. Let's go ahead and add the tests for those to <code>maury/tests/test_accounts.py</code>:</p>
+<pre><code class="language-python">    def test_entity_name(self):
+        data = {
+                'name' : 'someaccount'
+                }
+
+        good = accounts.Entity(data = data)
+        bad = accounts.Entity(data = {})
+
+        # An entity with a name returns that name
+        self.assertEqual(good.name, data['name'])
+
+        # An entity without a name returns None
+        self.assertEqual(bad.name, None)
+
+    def test_entity_emergency_contact(self):
+        data = {
+                'emergency_contact' : '911'
+                }
+
+        good = accounts.Entity(data = data)
+        bad = accounts.Entity(data = {})
+
+        # An entity with an emergency contact returns that contact
+        self.assertEqual(good.emergency_contact, data['emergency_contact'])
+
+        # An entity without an emergency contact returns None
+        self.assertEqual(bad.emergency_contact, None)
+</code></pre>
+<p>We already know that these tests fail, and we already know why ... there's not an implementation for these properties. Let's go ahead and add them to <code>maury/accounts.py</code>:</p>
+<pre><code class="language-python">    @property
+    def name(self):
+        &quot;&quot;&quot;Get the account's name&quot;&quot;&quot;
+
+        return self.fetch('name')
+
+    @property
+    def emergency_contact(self):
+        &quot;&quot;&quot;Get the account's emergency contact&quot;&quot;&quot;
+
+        return self.fetch('emergency_contact')
+</code></pre>
+<p>Boom. Our tests pass, and all of our (currently required) specific readers are implemented.</p>
+<a class="header" href="print.html#immutability" id="immutability"><h2>Immutability</h2></a>
+<p>The last requirement that we have is that entities should be immutable. If I understand everything properly, this is unfortunately not technically possible for third-party types, like our <code>Entity</code> class.</p>
+<p>To that end, we're using Python's social conventions to get as close as we can here (without dropping down to C to implement our data structure). That is, an Entity's data is stored in its <code>__data</code> member, and the social convention in Python is to not directly access methods and members that begin with <code>__</code>.</p>
+<p>I'd personally prefer a stronger guarantee here. That said, this tradeoff also happens in just about all of the existing <code>maury</code> implementations (the notable exception being <code>maury-rust</code>).</p>
+<p>So, while it's technically possible for somebody using our client to modify the makeup of a given account Entity, it would be bad form for them to do so.</p>
+<a class="header" href="print.html#list-accounts" id="list-accounts"><h1>List Accounts</h1></a>
+<a class="header" href="print.html#list-accounts-for-a-user" id="list-accounts-for-a-user"><h1>List Accounts For A User</h1></a>
+<a class="header" href="print.html#show-an-account" id="show-an-account"><h1>Show An Account</h1></a>
+<a class="header" href="print.html#update-an-account" id="update-an-account"><h1>Update An Account</h1></a>
+<a class="header" href="print.html#users" id="users"><h1>Users</h1></a>
 <a class="header" href="print.html#environments" id="environments"><h1>Environments</h1></a>
 
                     </main>

@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Odds and Ends - Cartography: Mapping REST APIs</title>
+        <title>Show An Account - Cartography: Mapping REST APIs</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="An exploration of a portable technique for creating REST API clients">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -74,7 +74,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li class="affix"><a href="preface/overview.html">Howdy</a></li><li><a href="getting_started/overview.html"><strong aria-hidden="true">1.</strong> Getting Started</a></li><li><ol class="section"><li><a href="getting_started/gathering_information.html"><strong aria-hidden="true">1.1.</strong> Gathering Information</a></li><li><a href="getting_started/up_front_design.html"><strong aria-hidden="true">1.2.</strong> Up-front Design</a></li><li><a href="getting_started/external_dependencies.html"><strong aria-hidden="true">1.3.</strong> External Dependencies</a></li></ol></li><li><a href="implementing_a_driver/overview.html"><strong aria-hidden="true">2.</strong> Implementing A Driver</a></li><li><ol class="section"><li><a href="implementing_a_driver/get_the_first_verb.html"><strong aria-hidden="true">2.1.</strong> GET: the First Verb</a></li><li><a href="implementing_a_driver/post_the_reverbening.html"><strong aria-hidden="true">2.2.</strong> POST: the Reverbening</a></li><li><a href="implementing_a_driver/put_patch_the_verb_legacy.html"><strong aria-hidden="true">2.3.</strong> PUT/PATCH: the Verb Legacy</a></li><li><a href="implementing_a_driver/delete_the_final_verb.html"><strong aria-hidden="true">2.4.</strong> DELETE: the Final Verb</a></li><li><a href="implementing_a_driver/odds_and_ends.html" class="active"><strong aria-hidden="true">2.5.</strong> Odds and Ends</a></li></ol></li><li><a href="handling_endpoints/overview.html"><strong aria-hidden="true">3.</strong> Handling Endpoints</a></li><li><ol class="section"><li><a href="handling_endpoints/gathering_information.html"><strong aria-hidden="true">3.1.</strong> Gathering Information</a></li><li><a href="handling_endpoints/up_front_design.html"><strong aria-hidden="true">3.2.</strong> (WIP) Up-front Design</a></li></ol></li><li><a href="accounts/overview.html"><strong aria-hidden="true">4.</strong> (WIP) Accounts</a></li><li><ol class="section"><li><a href="accounts/entity.html"><strong aria-hidden="true">4.1.</strong> Entity</a></li><li><a href="accounts/all.html"><strong aria-hidden="true">4.2.</strong> List Accounts</a></li><li><a href="accounts/for_user.html"><strong aria-hidden="true">4.3.</strong> List Accounts For A User</a></li><li><a href="accounts/get.html"><strong aria-hidden="true">4.4.</strong> Show An Account</a></li><li><a href="accounts/update.html"><strong aria-hidden="true">4.5.</strong> Update An Account</a></li></ol></li><li><a href="users/overview.html"><strong aria-hidden="true">5.</strong> Users</a></li><li><a href="environments/overview.html"><strong aria-hidden="true">6.</strong> Environments</a></li></ol>
+            <ol class="chapter"><li class="affix"><a href="preface/overview.html">Howdy</a></li><li><a href="getting_started/overview.html"><strong aria-hidden="true">1.</strong> Getting Started</a></li><li><ol class="section"><li><a href="getting_started/gathering_information.html"><strong aria-hidden="true">1.1.</strong> Gathering Information</a></li><li><a href="getting_started/up_front_design.html"><strong aria-hidden="true">1.2.</strong> Up-front Design</a></li><li><a href="getting_started/external_dependencies.html"><strong aria-hidden="true">1.3.</strong> External Dependencies</a></li></ol></li><li><a href="implementing_a_driver/overview.html"><strong aria-hidden="true">2.</strong> Implementing A Driver</a></li><li><ol class="section"><li><a href="implementing_a_driver/get_the_first_verb.html"><strong aria-hidden="true">2.1.</strong> GET: the First Verb</a></li><li><a href="implementing_a_driver/post_the_reverbening.html"><strong aria-hidden="true">2.2.</strong> POST: the Reverbening</a></li><li><a href="implementing_a_driver/put_patch_the_verb_legacy.html"><strong aria-hidden="true">2.3.</strong> PUT/PATCH: the Verb Legacy</a></li><li><a href="implementing_a_driver/delete_the_final_verb.html"><strong aria-hidden="true">2.4.</strong> DELETE: the Final Verb</a></li><li><a href="implementing_a_driver/odds_and_ends.html"><strong aria-hidden="true">2.5.</strong> Odds and Ends</a></li></ol></li><li><a href="handling_endpoints/overview.html"><strong aria-hidden="true">3.</strong> Handling Endpoints</a></li><li><ol class="section"><li><a href="handling_endpoints/gathering_information.html"><strong aria-hidden="true">3.1.</strong> Gathering Information</a></li><li><a href="handling_endpoints/up_front_design.html"><strong aria-hidden="true">3.2.</strong> (WIP) Up-front Design</a></li></ol></li><li><a href="accounts/overview.html"><strong aria-hidden="true">4.</strong> (WIP) Accounts</a></li><li><ol class="section"><li><a href="accounts/entity.html"><strong aria-hidden="true">4.1.</strong> Entity</a></li><li><a href="accounts/all.html"><strong aria-hidden="true">4.2.</strong> List Accounts</a></li><li><a href="accounts/for_user.html"><strong aria-hidden="true">4.3.</strong> List Accounts For A User</a></li><li><a href="accounts/get.html" class="active"><strong aria-hidden="true">4.4.</strong> Show An Account</a></li><li><a href="accounts/update.html"><strong aria-hidden="true">4.5.</strong> Update An Account</a></li></ol></li><li><a href="users/overview.html"><strong aria-hidden="true">5.</strong> Users</a></li><li><a href="environments/overview.html"><strong aria-hidden="true">6.</strong> Environments</a></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -120,59 +120,20 @@
 
                 <div id="content" class="content">
                     <main>
-                        <a class="header" href="implementing_a_driver/odds_and_ends.html#odds-and-ends" id="odds-and-ends"><h1>Odds and Ends</h1></a>
-<p>Keep in mind, I said that it's <em>technically</em> complete, in as much as it does everything that we need for it to do. That doesn't necessarily mean that we're done, though.</p>
-<p>How usable is the <code>maury</code> package right now? How many layers of documentation and submodules does one have to dig through to find out how to create a <code>Client</code>?</p>
-<a class="header" href="implementing_a_driver/odds_and_ends.html#an-entrypoint" id="an-entrypoint"><h2>An Entrypoint</h2></a>
-<p>While it's not strictly necessary, I like to provide an easy entrypoint at the top-level of the package for things that get used a lot. That way, a developer using my library can just import the top level package, ask it for a client, and get rolling.</p>
-<p>First thing first, let's add a test for the function that we want to create in <code>maury/tests/test_new_client.py</code>:</p>
-<pre><code class="language-python">from unittest import TestCase
-
-import maury
-
-class TestMaury(TestCase):
-    def test_new_client(self):
-        s = maury.new_client(token = 'token12345')
-        self.assertIsInstance(s, maury.Client)
-</code></pre>
-<p>That's a pretty simple test (almost too simple, really), but it will do for our purposes right now. What's more, it fails if we try to run our tests right now, so we're definitely on the right track! Let's go ahead and implement this function in <code>maury/__init__.py</code>:</p>
-<pre><code class="language-python">from .client import Client
-
-def new_client(base_url = 'https://api.engineyard.com', token = None):
-    &quot;&quot;&quot;Create a new client driver instance.
-    
-    Keyword arguments:
-    base_url -- the base URL of the API (default: 'https://api.engineyard.com')
-    token -- the API authentication token (default: None)
-    &quot;&quot;&quot;
-
-    return Client(base_url = base_url, token = token)
-</code></pre>
-<a class="header" href="implementing_a_driver/odds_and_ends.html#conclusion" id="conclusion"><h2>Conclusion</h2></a>
-<p>Now we have a <em>somewhat friendly</em> and complete driver for the API that we're mapping. That's it for Phase 1, and now we're ready to move on to Phase 2.</p>
-<p>Feel free to take a break. Phase 2 is, if you can imagine it, a lot more reliant on code snippets than Phase 1 is, and it's also a rather tedious and repetitive affair.</p>
-<p>Also, just to be clear, you don't <strong><em>have</em></strong> to go any further than you already have. If you simply want to provide a lowish-level client that knows how to talk to the API that you're mapping so others can have a handy building block on which to build their API interactions, you're done. I like to go a little further than that, though, so I'll go ahead and trudge forward.</p>
-<a class="header" href="implementing_a_driver/odds_and_ends.html#questions" id="questions"><h2>Questions</h2></a>
-<p>Remember that I said that I'd ask you questions on occasion? Here are a few that come to mind:</p>
-<ul>
-<li>If our driver works so much like the <code>requests</code> package, why not just use that package directly?</li>
-<li>Why do we keep refactoring such a small module?</li>
-<li>Off the top of your head, what would be different about this driver if we were mapping the <a href="https://www.twilio.com/docs/api/rest">Twilio API</a> rather than the Engine Yard API?</li>
-<li>How about the <a href="https://github.com/tootsuite/documentation/blob/master/Using-the-API/API.md">Mastodon API</a>?</li>
-</ul>
+                        <a class="header" href="accounts/get.html#show-an-account" id="show-an-account"><h1>Show An Account</h1></a>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
-                            <a rel="prev" href="implementing_a_driver/delete_the_final_verb.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="accounts/for_user.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
                         
 
                         
-                            <a rel="next" href="handling_endpoints/overview.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="accounts/update.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
@@ -184,13 +145,13 @@ def new_client(base_url = 'https://api.engineyard.com', token = None):
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
-                    <a href="implementing_a_driver/delete_the_final_verb.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a href="accounts/for_user.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
 
                 
-                    <a href="handling_endpoints/overview.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a href="accounts/update.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 

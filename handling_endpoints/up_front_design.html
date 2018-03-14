@@ -1,0 +1,226 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>(WIP) Up-front Design - Cartography: Mapping REST APIs</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="An exploration of a portable technique for creating REST API clients">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <base href="../">
+
+        <link rel="stylesheet" href="book.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <link rel="shortcut icon" href="favicon.png">
+
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme -->
+        
+
+        
+
+        <!-- Fetch Clipboard.js from CDN but have a local fallback -->
+        <script src="https://cdn.jsdelivr.net/clipboard.js/1.6.1/clipboard.min.js"></script>
+        <script>
+            if (typeof Clipboard == 'undefined') {
+                document.write(unescape("%3Cscript src='clipboard.min.js'%3E%3C/script%3E"));
+            }
+        </script>
+
+    </head>
+    <body class="light">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
+            if (theme === null || theme === undefined) { theme = 'light'; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme;
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            document.querySelector('html').classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <ol class="chapter"><li class="affix"><a href="preface/overview.html">Howdy</a></li><li><a href="getting_started/overview.html"><strong aria-hidden="true">1.</strong> Getting Started</a></li><li><ol class="section"><li><a href="getting_started/gathering_information.html"><strong aria-hidden="true">1.1.</strong> Gathering Information</a></li><li><a href="getting_started/up_front_design.html"><strong aria-hidden="true">1.2.</strong> Up-front Design</a></li><li><a href="getting_started/external_dependencies.html"><strong aria-hidden="true">1.3.</strong> External Dependencies</a></li></ol></li><li><a href="implementing_a_driver/overview.html"><strong aria-hidden="true">2.</strong> Implementing A Driver</a></li><li><ol class="section"><li><a href="implementing_a_driver/get_the_first_verb.html"><strong aria-hidden="true">2.1.</strong> GET: the First Verb</a></li><li><a href="implementing_a_driver/post_the_reverbening.html"><strong aria-hidden="true">2.2.</strong> POST: the Reverbening</a></li><li><a href="implementing_a_driver/put_patch_the_verb_legacy.html"><strong aria-hidden="true">2.3.</strong> PUT/PATCH: the Verb Legacy</a></li><li><a href="implementing_a_driver/delete_the_final_verb.html"><strong aria-hidden="true">2.4.</strong> DELETE: the Final Verb</a></li><li><a href="implementing_a_driver/odds_and_ends.html"><strong aria-hidden="true">2.5.</strong> Odds and Ends</a></li></ol></li><li><a href="handling_endpoints/overview.html"><strong aria-hidden="true">3.</strong> Handling Endpoints</a></li><li><ol class="section"><li><a href="handling_endpoints/gathering_information.html"><strong aria-hidden="true">3.1.</strong> Gathering Information</a></li><li><a href="handling_endpoints/up_front_design.html" class="active"><strong aria-hidden="true">3.2.</strong> (WIP) Up-front Design</a></li></ol></li><li><a href="accounts/overview.html"><strong aria-hidden="true">4.</strong> (WIP) Accounts</a></li><li><ol class="section"><li><a href="accounts/entity.html"><strong aria-hidden="true">4.1.</strong> Entity</a></li><li><a href="accounts/all.html"><strong aria-hidden="true">4.2.</strong> List Accounts</a></li><li><a href="accounts/for_user.html"><strong aria-hidden="true">4.3.</strong> List Accounts For A User</a></li><li><a href="accounts/get.html"><strong aria-hidden="true">4.4.</strong> Show An Account</a></li><li><a href="accounts/update.html"><strong aria-hidden="true">4.5.</strong> Update An Account</a></li></ol></li><li><a href="users/overview.html"><strong aria-hidden="true">5.</strong> Users</a></li><li><a href="environments/overview.html"><strong aria-hidden="true">6.</strong> Environments</a></li></ol>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light <span class="default">(default)</span></button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                        </div>
+
+                        <h1 class="menu-title">Cartography: Mapping REST APIs</h1>
+
+                        <div class="right-buttons">
+                            <a href="print.html" title="Print this book" aria-label="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <a class="header" href="handling_endpoints/up_front_design.html#up-front-design" id="up-front-design"><h1>Up-front Design</h1></a>
+<p>As they all have slightly different requiremnts, it's a little more difficult to do much design for these endpoints as a whole. Still, we can lay out some basic design elements for all of them:</p>
+<ul>
+<li>An endpoint is wholly contained within a maury submodule</li>
+<li>An endpoint contains an Entity class</li>
+<li>An endpoint contains one or more module-level functions</li>
+<li>These module-level functions all take a <code>Client</code> instance as their first argument</li>
+</ul>
+<p>Let's break that down a bit further.</p>
+<a class="header" href="handling_endpoints/up_front_design.html#why-submodules" id="why-submodules"><h2>Why Submodules?</h2></a>
+<p>Every formal computer science class that I've taken has emphasized the importance of modular code. The reasoning that's always used is that modular code is code that is easy to re-use. I'm not going to deny that, but I honestly think there's a more important quality to modular code:</p>
+<p>A highly modular system contains many clear seams.</p>
+<p>What do I mean by &quot;seam?&quot; Much like the seams in your clothing that join two pieces of fabric, a seam in a software system is the methods, references, and so on that allow two pieces of the system to work together. There are a few reasons that seams are handy, but here are the ones that I care about the most, and they're related to each other:</p>
+<ul>
+<li>A seam is a clear, concrete separation of concerns</li>
+<li>A seam gives us a concrete border along which we can mock the code that is not directly under test</li>
+</ul>
+<a class="header" href="handling_endpoints/up_front_design.html#separation-of-concerns" id="separation-of-concerns"><h3>Separation of Concerns</h3></a>
+<p>In object-oriented design, particularly in terms of [SOLID](https://en.wikipedia.org/wiki/SOLID_(object-oriented_design), one of the big goals is to limit the number of responsibilities given to a single object. Heck, the Single Responsibility Principle is the &quot;S&quot; in SOLID.</p>
+<p>That's fine and good for individual classes, but I like to apply SRP as much as is possible to the module that contains those classes. For example, you'll see in the following chapters that the &quot;accounts&quot; module only does account stuff, the &quot;environments&quot; module only does environment stuff, so on.</p>
+<a class="header" href="handling_endpoints/up_front_design.html#mocking-along-seams" id="mocking-along-seams"><h3>Mocking Along Seams</h3></a>
+<p>Sometimes, it's incredibly inconvenient to actually run all of the code that's invovled with generating a result in our tests. For example, in our driver implementation, you saw that we used <code>requests-mock</code> to fake out the raw HTTP calls that were made.</p>
+<p>Generally speaking, there are two big important rules for mocking:</p>
+<ul>
+<li>You cannot mock the code under test</li>
+<li>You can only mock documented interfaces for which you can reasonably replicate behavior</li>
+</ul>
+<p>This is usually rolled up neatly as &quot;mock along the seam.&quot; In the case of our driver, we don't &quot;own&quot; the upstream API, so that is a natural seam. That being the case, we mocked specific known behaviors of the upstream API.</p>
+<p>Generally speaking, it's perfectly fine to mock code along any seam in your system. We'll get deeper into this in the following chapters, and it's a technique that I very much hope carries over into all of your projects if you don't already work this way.</p>
+<a class="header" href="handling_endpoints/up_front_design.html#entities" id="entities"><h2>Entities</h2></a>
+<p>In both the Data Mapper and the Repository patterns, the actual data object that is returned from the data store is typically referred to as an &quot;entity.&quot; In the case of Repository, it's usually something like a Python dictionary, and in the case of Data Mapper, it's typically an object with reader methods for the properties of the object.</p>
+<p>Take a look back at the Engine Yard API documentation: more or less every request returns a JSON object that describes one or more instance of the requested resource. Those are entities in the broad sense.</p>
+<p>I mentioned that the API client design that I like is somewhat like the Data Mapper pattern overlayed on top of the Repository pattern. That being the case, here's the general design that we'll use for all Entity classes:</p>
+<ul>
+<li>An Entity has a reader for each important property</li>
+<li>An Entity has a general reader that can access any property</li>
+<li>An Entity should be immutable</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="handling_endpoints/gathering_information.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+                            <a rel="next" href="accounts/overview.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a href="handling_endpoints/gathering_information.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a href="accounts/overview.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+            </nav>
+
+        </div>
+
+
+        <!-- Local fallback for Font Awesome -->
+        <script>
+            if (getComputedStyle(document.querySelector(".fa")).fontFamily !== "FontAwesome") {
+                var link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.type = 'text/css';
+                link.href = '_FontAwesome/css/font-awesome.css';
+                document.head.insertBefore(link, document.head.firstChild)
+            }
+        </script>
+
+        
+
+        
+
+        
+
+        
+
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS script -->
+        
+
+    </body>
+</html>
